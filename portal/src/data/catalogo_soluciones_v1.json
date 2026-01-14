@@ -1,0 +1,1773 @@
+[
+  {
+    "id": "1",
+    "nombre": "Recomendador de productos",
+    "descripcion": "",
+    "problema": "Falta de asesoramiento → baja conversión",
+    "outcome": "Recomienda productos con explicación para aumentar conversión",
+    "tipoSolucion": [
+      "Agente IA",
+      "Integración"
+    ],
+    "sector": [
+      "E-Commerce"
+    ],
+    "departamento": [
+      "Ventas"
+    ],
+    "complejidad": 2,
+    "ttv": "",
+    "duracion_dias": 7,
+    "precioSetupMin": 1900,
+    "precioSetupMax": 1900,
+    "precio_setup": 1900,
+    "precioMensualMin": 99,
+    "precioMensualMax": 99,
+    "precio_aprox": "",
+    "entregables": [
+      "Agente + set pruebas + mini manual"
+    ],
+    "requisitos": [
+      "Catálogo + atributos + (futuro) Shopify/Presta"
+    ],
+    "riesgos": [
+      "Datos de usuario (perfilado)"
+    ],
+    "estado": "Activo",
+    "image_url": null,
+    "image_status": "none"
+  },
+  {
+    "id": "2",
+    "nombre": "SynerSocial",
+    "descripcion": "",
+    "problema": "Tiempo/coste alto de crear contenido",
+    "outcome": "Crear, planificar y publicar RRSS desde una sola plataforma",
+    "tipoSolucion": [
+      "SaaS"
+    ],
+    "sector": [
+      "Multisector"
+    ],
+    "departamento": [
+      "Marketing"
+    ],
+    "complejidad": 1,
+    "ttv": "",
+    "duracion_dias": 1,
+    "precioSetupMin": 490,
+    "precioSetupMax": 490,
+    "precio_setup": 490,
+    "precioMensualMin": 149,
+    "precioMensualMax": 149,
+    "precio_aprox": "",
+    "entregables": [
+      "Cuenta lista + conexiones + checklist go-live"
+    ],
+    "requisitos": [
+      "Accesos a RRSS + guía de marca"
+    ],
+    "riesgos": [
+      "Datos de cuentas RRSS"
+    ],
+    "estado": "Activo",
+    "image_url": null,
+    "image_status": "none"
+  },
+  {
+    "id": "3",
+    "nombre": "RacketPlanner",
+    "descripcion": "",
+    "problema": "Dueño pegado a WhatsApp + horas valle",
+    "outcome": "Reservas por WhatsApp + proactividad para llenar horas valle",
+    "tipoSolucion": [
+      "SaaS"
+    ],
+    "sector": [
+      "Deporte",
+      "Multisector"
+    ],
+    "departamento": [
+      "Atención"
+    ],
+    "complejidad": 1,
+    "ttv": "",
+    "duracion_dias": 1,
+    "precioSetupMin": 990,
+    "precioSetupMax": 990,
+    "precio_setup": 990,
+    "precioMensualMin": 149,
+    "precioMensualMax": 149,
+    "precio_aprox": "",
+    "entregables": [
+      "Bot + web + checklist + guía"
+    ],
+    "requisitos": [
+      "Reglas/horarios + WhatsApp + calendario (TBD)"
+    ],
+    "riesgos": [
+      "Datos personales (teléfono)"
+    ],
+    "estado": "Activo",
+    "image_url": null,
+    "image_status": "none"
+  },
+  {
+    "id": "4",
+    "nombre": "SynerControl (General)",
+    "descripcion": "",
+    "problema": "Falta info en tiempo real",
+    "outcome": "Dashboard + chat para decidir con datos (Holded)",
+    "tipoSolucion": [
+      "Agente IA",
+      "Dashboards",
+      "Integración"
+    ],
+    "sector": [
+      "Construcción",
+      "Multisector"
+    ],
+    "departamento": [
+      "Dirección"
+    ],
+    "complejidad": 1,
+    "ttv": "",
+    "duracion_dias": 15,
+    "precioSetupMin": 2900,
+    "precioSetupMax": 2900,
+    "precio_setup": 2900,
+    "precioMensualMin": 299,
+    "precioMensualMax": 299,
+    "precio_aprox": "",
+    "entregables": [
+      "Dashboard + chats + checklist + guía"
+    ],
+    "requisitos": [
+      "Acceso Holded + datos mínimos actualizados"
+    ],
+    "riesgos": [
+      "Datos empresa (finanzas)"
+    ],
+    "estado": "Activo",
+    "image_url": null,
+    "image_status": "none"
+  },
+  {
+    "id": "5",
+    "nombre": "Gestión Facturas (Conciliación)",
+    "descripcion": "",
+    "problema": "Conciliación manual + errores",
+    "outcome": "Conciliación bancaria + control facturas automático",
+    "tipoSolucion": [
+      "Automatización"
+    ],
+    "sector": [
+      "Multisector"
+    ],
+    "departamento": [
+      "Administración"
+    ],
+    "complejidad": 4,
+    "ttv": "",
+    "duracion_dias": 21,
+    "precioSetupMin": 1500,
+    "precioSetupMax": 1500,
+    "precio_setup": 1500,
+    "precioMensualMin": 129,
+    "precioMensualMax": 129,
+    "precio_aprox": "",
+    "entregables": [
+      "Flujo + docs + logs + checklist"
+    ],
+    "requisitos": [
+      "Extractos banco + facturas + reglas"
+    ],
+    "riesgos": [
+      "Datos bancarios"
+    ],
+    "estado": "Activo",
+    "image_url": null,
+    "image_status": "none"
+  },
+  {
+    "id": "6",
+    "nombre": "Plataforma comercial básica (Dynamics)",
+    "descripcion": "",
+    "problema": "CRM no se convierte en acciones",
+    "outcome": "Chat + tareas diarias + dashboard conectado a Dynamics",
+    "tipoSolucion": [],
+    "sector": [
+      "Multisector"
+    ],
+    "departamento": [],
+    "complejidad": 4,
+    "ttv": "",
+    "duracion_dias": null,
+    "precioSetupMin": 3500,
+    "precioSetupMax": 3500,
+    "precio_setup": 3500,
+    "precioMensualMin": 399,
+    "precioMensualMax": 399,
+    "precio_aprox": "",
+    "entregables": [
+      "App lista + checklist + guía"
+    ],
+    "requisitos": [
+      "Acceso Dynamics + usuarios + pipeline mínimo"
+    ],
+    "riesgos": [
+      "Datos CRM"
+    ],
+    "estado": "Activo",
+    "image_url": null,
+    "image_status": "none"
+  },
+  {
+    "id": "7",
+    "nombre": "SynerControl (E-Commerce)",
+    "descripcion": "",
+    "problema": "Alta productos lenta + SEO flojo",
+    "outcome": "Alta productos + SEO + imágenes (con IA)",
+    "tipoSolucion": [
+      "SaaS"
+    ],
+    "sector": [
+      "E-Commerce"
+    ],
+    "departamento": [
+      "Dirección"
+    ],
+    "complejidad": 1,
+    "ttv": "",
+    "duracion_dias": 1,
+    "precioSetupMin": 1900,
+    "precioSetupMax": 1900,
+    "precio_setup": 1900,
+    "precioMensualMin": 249,
+    "precioMensualMax": 249,
+    "precio_aprox": "",
+    "entregables": [
+      "Generador fichas + guía + checklist"
+    ],
+    "requisitos": [
+      "Datos producto + marca + (futuro) Shopify/Holded"
+    ],
+    "riesgos": [
+      "Datos catálogo/empresa"
+    ],
+    "estado": "Activo",
+    "image_url": null,
+    "image_status": "none"
+  },
+  {
+    "id": "8",
+    "nombre": "Sistema RAG (Genérico)",
+    "descripcion": "",
+    "problema": "Info dispersa, nadie encuentra nada",
+    "outcome": "“GPT interno” para chatear con docs con fuentes",
+    "tipoSolucion": [
+      "Agente IA"
+    ],
+    "sector": [
+      "Multisector"
+    ],
+    "departamento": [
+      "Dirección"
+    ],
+    "complejidad": 1,
+    "ttv": "",
+    "duracion_dias": 21,
+    "precioSetupMin": 1900,
+    "precioSetupMax": 1900,
+    "precio_setup": 1900,
+    "precioMensualMin": 199,
+    "precioMensualMax": 199,
+    "precio_aprox": "",
+    "entregables": [
+      "Flujo + base conocimiento + guía"
+    ],
+    "requisitos": [
+      "Docs + permisos + repositorio"
+    ],
+    "riesgos": [
+      "Datos sensibles internos"
+    ],
+    "estado": "Activo",
+    "image_url": null,
+    "image_status": "none"
+  },
+  {
+    "id": "9",
+    "nombre": "Agente Ventas RAG",
+    "descripcion": "",
+    "problema": "Falta playbooks + seguimiento",
+    "outcome": "Copiloto de ventas con RAG (scripts/objeciones)",
+    "tipoSolucion": [
+      "Agente IA"
+    ],
+    "sector": [
+      "Multisector"
+    ],
+    "departamento": [
+      "Ventas"
+    ],
+    "complejidad": 2,
+    "ttv": "",
+    "duracion_dias": 15,
+    "precioSetupMin": 1200,
+    "precioSetupMax": 1200,
+    "precio_setup": 1200,
+    "precioMensualMin": 99,
+    "precioMensualMax": 99,
+    "precio_aprox": "",
+    "entregables": [
+      "Agente + KB + tests"
+    ],
+    "requisitos": [
+      "Docs comerciales + (ideal) CRM"
+    ],
+    "riesgos": [
+      "Datos cliente/CRM"
+    ],
+    "estado": "Activo",
+    "image_url": null,
+    "image_status": "none"
+  },
+  {
+    "id": "10",
+    "nombre": "Agente Proyectos RAG",
+    "descripcion": "",
+    "problema": "Falta control de margen/tiempo/calidad",
+    "outcome": "Copiloto PM con alertas y prioridades",
+    "tipoSolucion": [
+      "Agente IA"
+    ],
+    "sector": [
+      "Multisector"
+    ],
+    "departamento": [
+      "Operaciones",
+      "PMO"
+    ],
+    "complejidad": 2,
+    "ttv": "",
+    "duracion_dias": 15,
+    "precioSetupMin": 1200,
+    "precioSetupMax": 1200,
+    "precio_setup": 1200,
+    "precioMensualMin": 129,
+    "precioMensualMax": 129,
+    "precio_aprox": "",
+    "entregables": [
+      "Agente + checklist + guía"
+    ],
+    "requisitos": [
+      "Datos de proyectos (ideal Holded/ERP)"
+    ],
+    "riesgos": [
+      "Datos empresa (finanzas)"
+    ],
+    "estado": "Activo",
+    "image_url": null,
+    "image_status": "none"
+  },
+  {
+    "id": "12",
+    "nombre": "Diagnóstico",
+    "descripcion": "",
+    "problema": "Incertidumbre sobre dónde automatizar, falta de visibilidad de KPIs en tiempo real y caos operativo”",
+    "outcome": "Roadmap de eficiencia y plan de acción priorizado por ROI para transformar problemas en proyectos rentables",
+    "tipoSolucion": [
+      "Consultoría"
+    ],
+    "sector": [
+      "Agencias Marketing",
+      "Distribución",
+      "E-Commerce",
+      "Logística",
+      "Multisector"
+    ],
+    "departamento": [
+      "Dirección"
+    ],
+    "complejidad": 1,
+    "ttv": "",
+    "duracion_dias": 7,
+    "precioSetupMin": 500,
+    "precioSetupMax": 500,
+    "precio_setup": 500,
+    "precioMensualMin": 0,
+    "precioMensualMax": 0,
+    "precio_aprox": "",
+    "entregables": [
+      "Propuesta de plan de acción",
+      "Roadmap priorizado y definición de KPIs antes/después”"
+    ],
+    "requisitos": [
+      "Detección de al menos 3 procesos críticos automatizables con un ROI estimado claro"
+    ],
+    "riesgos": [
+      "El informe puede quedar en un cajón si no se cierra una ventana de decisión inmediata tras la entrega"
+    ],
+    "estado": "Borrador",
+    "image_url": null,
+    "image_status": "none"
+  },
+  {
+    "id": "13",
+    "nombre": "Formación ChatGPT",
+    "descripcion": "",
+    "problema": "",
+    "outcome": "",
+    "tipoSolucion": [
+      "Formación"
+    ],
+    "sector": [],
+    "departamento": [],
+    "complejidad": null,
+    "ttv": "",
+    "duracion_dias": null,
+    "precioSetupMin": null,
+    "precioSetupMax": null,
+    "precio_setup": null,
+    "precioMensualMin": null,
+    "precioMensualMax": null,
+    "precio_aprox": "",
+    "entregables": [],
+    "requisitos": [],
+    "riesgos": [],
+    "estado": "Activo",
+    "image_url": null,
+    "image_status": "none"
+  },
+  {
+    "id": "14",
+    "nombre": "Formación Audiovisual",
+    "descripcion": "",
+    "problema": "",
+    "outcome": "",
+    "tipoSolucion": [
+      "Formación"
+    ],
+    "sector": [],
+    "departamento": [],
+    "complejidad": null,
+    "ttv": "",
+    "duracion_dias": null,
+    "precioSetupMin": null,
+    "precioSetupMax": null,
+    "precio_setup": null,
+    "precioMensualMin": null,
+    "precioMensualMax": null,
+    "precio_aprox": "",
+    "entregables": [],
+    "requisitos": [],
+    "riesgos": [],
+    "estado": "Activo",
+    "image_url": null,
+    "image_status": "none"
+  },
+  {
+    "id": "15",
+    "nombre": "Formación Copilot",
+    "descripcion": "",
+    "problema": "",
+    "outcome": "",
+    "tipoSolucion": [
+      "Formación"
+    ],
+    "sector": [],
+    "departamento": [],
+    "complejidad": null,
+    "ttv": "",
+    "duracion_dias": null,
+    "precioSetupMin": null,
+    "precioSetupMax": null,
+    "precio_setup": null,
+    "precioMensualMin": null,
+    "precioMensualMax": null,
+    "precio_aprox": "",
+    "entregables": [],
+    "requisitos": [],
+    "riesgos": [],
+    "estado": "Activo",
+    "image_url": null,
+    "image_status": "none"
+  },
+  {
+    "id": "16",
+    "nombre": "Formación Make",
+    "descripcion": "",
+    "problema": "",
+    "outcome": "",
+    "tipoSolucion": [
+      "Formación"
+    ],
+    "sector": [],
+    "departamento": [],
+    "complejidad": null,
+    "ttv": "",
+    "duracion_dias": null,
+    "precioSetupMin": null,
+    "precioSetupMax": null,
+    "precio_setup": null,
+    "precioMensualMin": null,
+    "precioMensualMax": null,
+    "precio_aprox": "",
+    "entregables": [],
+    "requisitos": [],
+    "riesgos": [],
+    "estado": "Activo",
+    "image_url": null,
+    "image_status": "none"
+  },
+  {
+    "id": "17",
+    "nombre": "Formación n8n",
+    "descripcion": "",
+    "problema": "",
+    "outcome": "",
+    "tipoSolucion": [
+      "Formación"
+    ],
+    "sector": [],
+    "departamento": [],
+    "complejidad": null,
+    "ttv": "",
+    "duracion_dias": null,
+    "precioSetupMin": null,
+    "precioSetupMax": null,
+    "precio_setup": null,
+    "precioMensualMin": null,
+    "precioMensualMax": null,
+    "precio_aprox": "",
+    "entregables": [],
+    "requisitos": [],
+    "riesgos": [],
+    "estado": "Activo",
+    "image_url": null,
+    "image_status": "none"
+  },
+  {
+    "id": "18",
+    "nombre": "Formación Personalizada",
+    "descripcion": "",
+    "problema": "",
+    "outcome": "",
+    "tipoSolucion": [
+      "Formación"
+    ],
+    "sector": [],
+    "departamento": [],
+    "complejidad": null,
+    "ttv": "",
+    "duracion_dias": null,
+    "precioSetupMin": null,
+    "precioSetupMax": null,
+    "precio_setup": null,
+    "precioMensualMin": null,
+    "precioMensualMax": null,
+    "precio_aprox": "",
+    "entregables": [],
+    "requisitos": [],
+    "riesgos": [],
+    "estado": "Activo",
+    "image_url": null,
+    "image_status": "none"
+  },
+  {
+    "id": "19",
+    "nombre": "Recupera Carritos",
+    "descripcion": "Recuperación automática WhatsApp/Email",
+    "problema": "Carritos se pierden sin seguimiento",
+    "outcome": "Recuperar carritos y aumentar ventas",
+    "tipoSolucion": [
+      "Automatización",
+      "Integración"
+    ],
+    "sector": [
+      "E-Commerce"
+    ],
+    "departamento": [
+      "Marketing"
+    ],
+    "complejidad": null,
+    "ttv": "1–2 sem",
+    "duracion_dias": null,
+    "precioSetupMin": null,
+    "precioSetupMax": null,
+    "precio_setup": null,
+    "precioMensualMin": null,
+    "precioMensualMax": null,
+    "precio_aprox": "≥1.500€ (pack)",
+    "entregables": [],
+    "requisitos": [],
+    "riesgos": [],
+    "estado": "Activo",
+    "image_url": null,
+    "image_status": "none"
+  },
+  {
+    "id": "20",
+    "nombre": "Panel del Negocio",
+    "descripcion": "Panel de control (operativo)",
+    "problema": "KPIs/reporting manual",
+    "outcome": "Visibilidad semanal de KPIs",
+    "tipoSolucion": [
+      "Dashboards",
+      "Integración"
+    ],
+    "sector": [
+      "Servicios prof."
+    ],
+    "departamento": [
+      "Dirección"
+    ],
+    "complejidad": null,
+    "ttv": "1–2 sem",
+    "duracion_dias": null,
+    "precioSetupMin": null,
+    "precioSetupMax": null,
+    "precio_setup": null,
+    "precioMensualMin": null,
+    "precioMensualMax": null,
+    "precio_aprox": "≥1.500€ (pack)",
+    "entregables": [],
+    "requisitos": [],
+    "riesgos": [],
+    "estado": "Activo",
+    "image_url": null,
+    "image_status": "none"
+  },
+  {
+    "id": "21",
+    "nombre": "Email en Orden",
+    "descripcion": "Triage + respuestas sugeridas",
+    "problema": "Email infinito",
+    "outcome": "Reducir tiempo de email y SLA",
+    "tipoSolucion": [
+      "Agente IA",
+      "Automatización"
+    ],
+    "sector": [
+      "Servicios prof."
+    ],
+    "departamento": [
+      "Atención"
+    ],
+    "complejidad": null,
+    "ttv": "1–2 sem",
+    "duracion_dias": null,
+    "precioSetupMin": null,
+    "precioSetupMax": null,
+    "precio_setup": null,
+    "precioMensualMin": null,
+    "precioMensualMax": null,
+    "precio_aprox": "≥1.500€ (pack)",
+    "entregables": [],
+    "requisitos": [],
+    "riesgos": [],
+    "estado": "Activo",
+    "image_url": null,
+    "image_status": "none"
+  },
+  {
+    "id": "22",
+    "nombre": "Contenido en Serie",
+    "descripcion": "Repurpose + calendario editorial",
+    "problema": "Contenido caro y lento",
+    "outcome": "Multiplicar output de contenido",
+    "tipoSolucion": [
+      "Agente IA"
+    ],
+    "sector": [
+      "Servicios prof."
+    ],
+    "departamento": [
+      "Marketing"
+    ],
+    "complejidad": null,
+    "ttv": "1–2 sem",
+    "duracion_dias": null,
+    "precioSetupMin": null,
+    "precioSetupMax": null,
+    "precio_setup": null,
+    "precioMensualMin": null,
+    "precioMensualMax": null,
+    "precio_aprox": "≥1.500€ (pack)",
+    "entregables": [],
+    "requisitos": [],
+    "riesgos": [],
+    "estado": "Activo",
+    "image_url": null,
+    "image_status": "none"
+  },
+  {
+    "id": "23",
+    "nombre": "Factura sin Retraso",
+    "descripcion": "Facturación asistida + automatización",
+    "problema": "Facturación lenta / errores",
+    "outcome": "Facturar antes y cobrar antes",
+    "tipoSolucion": [
+      "Automatización",
+      "Integración"
+    ],
+    "sector": [
+      "Servicios prof."
+    ],
+    "departamento": [
+      "Finanzas"
+    ],
+    "complejidad": null,
+    "ttv": "1–3 sem",
+    "duracion_dias": null,
+    "precioSetupMin": null,
+    "precioSetupMax": null,
+    "precio_setup": null,
+    "precioMensualMin": null,
+    "precioMensualMax": null,
+    "precio_aprox": "≥1.500€ + (según integraciones)",
+    "entregables": [],
+    "requisitos": [],
+    "riesgos": [],
+    "estado": "Activo",
+    "image_url": null,
+    "image_status": "none"
+  },
+  {
+    "id": "24",
+    "nombre": "Buscador Interno",
+    "descripcion": "RAG interno (docs + casos)",
+    "problema": "Conocimiento disperso",
+    "outcome": "Respuestas consistentes y rápidas",
+    "tipoSolucion": [
+      "Agente IA",
+      "Integración"
+    ],
+    "sector": [
+      "Servicios prof."
+    ],
+    "departamento": [
+      "Delivery"
+    ],
+    "complejidad": null,
+    "ttv": "2–4 sem",
+    "duracion_dias": null,
+    "precioSetupMin": null,
+    "precioSetupMax": null,
+    "precio_setup": null,
+    "precioMensualMin": null,
+    "precioMensualMax": null,
+    "precio_aprox": "≥1.500€ + (proyecto; alcance define)",
+    "entregables": [],
+    "requisitos": [],
+    "riesgos": [],
+    "estado": "Activo",
+    "image_url": null,
+    "image_status": "none"
+  },
+  {
+    "id": "25",
+    "nombre": "Resumen de Reuniones",
+    "descripcion": "Resumen + tareas + email",
+    "problema": "Post-reunión consume tiempo",
+    "outcome": "Ahorrar tiempo y no perder tareas",
+    "tipoSolucion": [
+      "Agente IA",
+      "Automatización"
+    ],
+    "sector": [
+      "Servicios prof."
+    ],
+    "departamento": [
+      "Operaciones"
+    ],
+    "complejidad": null,
+    "ttv": "1–2 sem",
+    "duracion_dias": null,
+    "precioSetupMin": null,
+    "precioSetupMax": null,
+    "precio_setup": null,
+    "precioMensualMin": null,
+    "precioMensualMax": null,
+    "precio_aprox": "≥1.500€ (pack)",
+    "entregables": [],
+    "requisitos": [],
+    "riesgos": [],
+    "estado": "Activo",
+    "image_url": null,
+    "image_status": "none"
+  },
+  {
+    "id": "26",
+    "nombre": "Seguimiento de Leads",
+    "descripcion": "Enrutado + follow-up automático",
+    "problema": "Leads sin seguimiento",
+    "outcome": "Subir tasa de contacto y cierre",
+    "tipoSolucion": [
+      "Automatización",
+      "Integración"
+    ],
+    "sector": [
+      "Servicios prof."
+    ],
+    "departamento": [
+      "Ventas"
+    ],
+    "complejidad": null,
+    "ttv": "1–2 sem",
+    "duracion_dias": null,
+    "precioSetupMin": null,
+    "precioSetupMax": null,
+    "precio_setup": null,
+    "precioMensualMin": null,
+    "precioMensualMax": null,
+    "precio_aprox": "≥1.500€ (pack)",
+    "entregables": [],
+    "requisitos": [],
+    "riesgos": [],
+    "estado": "Activo",
+    "image_url": null,
+    "image_status": "none"
+  },
+  {
+    "id": "27",
+    "nombre": "Cobros al Día",
+    "descripcion": "Seguimiento cobros + promesas pago",
+    "problema": "Cobros tardíos (coste financiero)",
+    "outcome": "Reducir días de cobro y coste financiero",
+    "tipoSolucion": [
+      "Automatización",
+      "Integración"
+    ],
+    "sector": [
+      "Construcción"
+    ],
+    "departamento": [
+      "Ventas"
+    ],
+    "complejidad": null,
+    "ttv": "1–2 sem",
+    "duracion_dias": null,
+    "precioSetupMin": null,
+    "precioSetupMax": null,
+    "precio_setup": null,
+    "precioMensualMin": null,
+    "precioMensualMax": null,
+    "precio_aprox": "≥1.500€ (pack)",
+    "entregables": [],
+    "requisitos": [],
+    "riesgos": [],
+    "estado": "Activo",
+    "image_url": null,
+    "image_status": "none"
+  },
+  {
+    "id": "28",
+    "nombre": "Presupuestos en Minutos",
+    "descripcion": "Propuesta automática desde plantilla",
+    "problema": "Propuestas lentas",
+    "outcome": "Enviar ofertas más rápido",
+    "tipoSolucion": [
+      "Agente IA",
+      "Integración"
+    ],
+    "sector": [
+      "Construcción"
+    ],
+    "departamento": [
+      "Ventas"
+    ],
+    "complejidad": null,
+    "ttv": "1–3 sem",
+    "duracion_dias": null,
+    "precioSetupMin": null,
+    "precioSetupMax": null,
+    "precio_setup": null,
+    "precioMensualMin": null,
+    "precioMensualMax": null,
+    "precio_aprox": "≥1.500€ + (según integraciones)",
+    "entregables": [],
+    "requisitos": [],
+    "riesgos": [],
+    "estado": "Activo",
+    "image_url": null,
+    "image_status": "none"
+  },
+  {
+    "id": "29",
+    "nombre": "Aviso de Desvíos",
+    "descripcion": "Alertas KPI coste/tiempo",
+    "problema": "Desviaciones se detectan tarde",
+    "outcome": "Alertas tempranas para evitar pérdidas",
+    "tipoSolucion": [
+      "Dashboards",
+      "Integración"
+    ],
+    "sector": [
+      "Construcción"
+    ],
+    "departamento": [
+      "Dirección"
+    ],
+    "complejidad": null,
+    "ttv": "2–4 sem",
+    "duracion_dias": null,
+    "precioSetupMin": null,
+    "precioSetupMax": null,
+    "precio_setup": null,
+    "precioMensualMin": null,
+    "precioMensualMax": null,
+    "precio_aprox": "≥1.500€ + (proyecto; alcance define)",
+    "entregables": [],
+    "requisitos": [],
+    "riesgos": [],
+    "estado": "Activo",
+    "image_url": null,
+    "image_status": "none"
+  },
+  {
+    "id": "30",
+    "nombre": "Albaranes Sin Errores",
+    "descripcion": "Validación + conciliación",
+    "problema": "Errores en albaranes/facturas",
+    "outcome": "Menos errores y conciliación rápida",
+    "tipoSolucion": [
+      "Automatización",
+      "Integración"
+    ],
+    "sector": [
+      "Construcción"
+    ],
+    "departamento": [
+      "Compras/Finanzas"
+    ],
+    "complejidad": null,
+    "ttv": "2–4 sem",
+    "duracion_dias": null,
+    "precioSetupMin": null,
+    "precioSetupMax": null,
+    "precio_setup": null,
+    "precioMensualMin": null,
+    "precioMensualMax": null,
+    "precio_aprox": "≥1.500€ + (según integraciones)",
+    "entregables": [],
+    "requisitos": [],
+    "riesgos": [],
+    "estado": "Activo",
+    "image_url": null,
+    "image_status": "none"
+  },
+  {
+    "id": "31",
+    "nombre": "Busca Documentos al Instante",
+    "descripcion": "RAG por obra (docs + búsqueda)",
+    "problema": "Buscar documentación pierde horas",
+    "outcome": "Encontrar info en segundos",
+    "tipoSolucion": [
+      "Agente IA",
+      "Integración"
+    ],
+    "sector": [
+      "Construcción"
+    ],
+    "departamento": [
+      "PMO"
+    ],
+    "complejidad": null,
+    "ttv": "2–4 sem",
+    "duracion_dias": null,
+    "precioSetupMin": null,
+    "precioSetupMax": null,
+    "precio_setup": null,
+    "precioMensualMin": null,
+    "precioMensualMax": null,
+    "precio_aprox": "≥1.500€ + (proyecto; alcance define)",
+    "entregables": [],
+    "requisitos": [],
+    "riesgos": [],
+    "estado": "Activo",
+    "image_url": null,
+    "image_status": "none"
+  },
+  {
+    "id": "32",
+    "nombre": "Parte de Obra Fácil",
+    "descripcion": "Parte diario voz→resumen→tareas",
+    "problema": "Partes incompletos → retrabajo",
+    "outcome": "Reducir retrabajo y mejorar seguimiento",
+    "tipoSolucion": [
+      "Automatización",
+      "Integración"
+    ],
+    "sector": [
+      "Construcción"
+    ],
+    "departamento": [
+      "Operaciones"
+    ],
+    "complejidad": null,
+    "ttv": "1–3 sem",
+    "duracion_dias": null,
+    "precioSetupMin": null,
+    "precioSetupMax": null,
+    "precio_setup": null,
+    "precioMensualMin": null,
+    "precioMensualMax": null,
+    "precio_aprox": "≥1.500€ + (según integraciones)",
+    "entregables": [],
+    "requisitos": [],
+    "riesgos": [],
+    "estado": "Activo",
+    "image_url": null,
+    "image_status": "none"
+  },
+  {
+    "id": "33",
+    "nombre": "Onboarding Rápido",
+    "descripcion": "Onboarding guiado + microformación",
+    "problema": "Onboarding/rotación caro",
+    "outcome": "Onboarding consistente y rápido",
+    "tipoSolucion": [
+      "Agente IA",
+      "Integración"
+    ],
+    "sector": [
+      "Restaurantes"
+    ],
+    "departamento": [
+      "RRHH"
+    ],
+    "complejidad": null,
+    "ttv": "2–4 sem",
+    "duracion_dias": null,
+    "precioSetupMin": null,
+    "precioSetupMax": null,
+    "precio_setup": null,
+    "precioMensualMin": null,
+    "precioMensualMax": null,
+    "precio_aprox": "≥1.500€ + (según integraciones)",
+    "entregables": [],
+    "requisitos": [],
+    "riesgos": [],
+    "estado": "Activo",
+    "image_url": null,
+    "image_status": "none"
+  },
+  {
+    "id": "34",
+    "nombre": "Cierre Mensual Fácil",
+    "descripcion": "Checklist + reporte automático",
+    "problema": "Cierre mensual lento",
+    "outcome": "Cerrar más rápido con menos estrés",
+    "tipoSolucion": [
+      "Automatización",
+      "Integración"
+    ],
+    "sector": [
+      "Restaurantes"
+    ],
+    "departamento": [
+      "Finanzas"
+    ],
+    "complejidad": null,
+    "ttv": "1–3 sem",
+    "duracion_dias": null,
+    "precioSetupMin": null,
+    "precioSetupMax": null,
+    "precio_setup": null,
+    "precioMensualMin": null,
+    "precioMensualMax": null,
+    "precio_aprox": "≥1.500€ + (según integraciones)",
+    "entregables": [],
+    "requisitos": [],
+    "riesgos": [],
+    "estado": "Activo",
+    "image_url": null,
+    "image_status": "none"
+  },
+  {
+    "id": "35",
+    "nombre": "Compra Ajustada",
+    "descripcion": "Predicción demanda semanal",
+    "problema": "Compras desajustadas por demanda",
+    "outcome": "Comprar mejor y reducir desperdicio",
+    "tipoSolucion": [
+      "Dashboards"
+    ],
+    "sector": [
+      "Restaurantes"
+    ],
+    "departamento": [
+      "Dirección"
+    ],
+    "complejidad": null,
+    "ttv": "2–4 sem",
+    "duracion_dias": null,
+    "precioSetupMin": null,
+    "precioSetupMax": null,
+    "precio_setup": null,
+    "precioMensualMin": null,
+    "precioMensualMax": null,
+    "precio_aprox": "≥1.500€ + (proyecto; alcance define)",
+    "entregables": [],
+    "requisitos": [],
+    "riesgos": [],
+    "estado": "Activo",
+    "image_url": null,
+    "image_status": "none"
+  },
+  {
+    "id": "36",
+    "nombre": "Reservas Automáticas",
+    "descripcion": "Agente reservas + FAQ + agenda",
+    "problema": "Reservas consumen tiempo",
+    "outcome": "Automatizar reservas y FAQ",
+    "tipoSolucion": [
+      "Automatización",
+      "Integración"
+    ],
+    "sector": [
+      "Restaurantes"
+    ],
+    "departamento": [
+      "Atención"
+    ],
+    "complejidad": null,
+    "ttv": "1–3 sem",
+    "duracion_dias": null,
+    "precioSetupMin": null,
+    "precioSetupMax": null,
+    "precio_setup": null,
+    "precioMensualMin": null,
+    "precioMensualMax": null,
+    "precio_aprox": "≥1.500€ + (según integraciones)",
+    "entregables": [],
+    "requisitos": [],
+    "riesgos": [],
+    "estado": "Activo",
+    "image_url": null,
+    "image_status": "none"
+  },
+  {
+    "id": "37",
+    "nombre": "Reseñas Bien Atendidas",
+    "descripcion": "Respuesta asistida + alertas",
+    "problema": "Reseñas sin respuesta",
+    "outcome": "Mejorar reputación y respuesta",
+    "tipoSolucion": [
+      "Agente IA",
+      "Integración"
+    ],
+    "sector": [
+      "Restaurantes"
+    ],
+    "departamento": [
+      "Marketing"
+    ],
+    "complejidad": null,
+    "ttv": "1–2 sem",
+    "duracion_dias": null,
+    "precioSetupMin": null,
+    "precioSetupMax": null,
+    "precio_setup": null,
+    "precioMensualMin": null,
+    "precioMensualMax": null,
+    "precio_aprox": "≥1.500€ (pack)",
+    "entregables": [],
+    "requisitos": [],
+    "riesgos": [],
+    "estado": "Activo",
+    "image_url": null,
+    "image_status": "none"
+  },
+  {
+    "id": "38",
+    "nombre": "Control de Merma",
+    "descripcion": "Control merma + alertas",
+    "problema": "Merma alta",
+    "outcome": "Bajar merma y compras innecesarias",
+    "tipoSolucion": [
+      "Dashboards"
+    ],
+    "sector": [
+      "Restaurantes"
+    ],
+    "departamento": [
+      "Compras"
+    ],
+    "complejidad": null,
+    "ttv": "2–4 sem",
+    "duracion_dias": null,
+    "precioSetupMin": null,
+    "precioSetupMax": null,
+    "precio_setup": null,
+    "precioMensualMin": null,
+    "precioMensualMax": null,
+    "precio_aprox": "≥1.500€ + (proyecto; alcance define)",
+    "entregables": [],
+    "requisitos": [],
+    "riesgos": [],
+    "estado": "Activo",
+    "image_url": null,
+    "image_status": "none"
+  },
+  {
+    "id": "39",
+    "nombre": "Adiós No-Shows",
+    "descripcion": "Confirmación + recordatorio WhatsApp",
+    "problema": "No-shows",
+    "outcome": "Reducir no-shows y recuperar ingresos",
+    "tipoSolucion": [
+      "Automatización",
+      "Integración"
+    ],
+    "sector": [
+      "Restaurantes"
+    ],
+    "departamento": [
+      "Operaciones"
+    ],
+    "complejidad": null,
+    "ttv": "1–2 sem",
+    "duracion_dias": null,
+    "precioSetupMin": null,
+    "precioSetupMax": null,
+    "precio_setup": null,
+    "precioMensualMin": null,
+    "precioMensualMax": null,
+    "precio_aprox": "≥1.500€ (pack)",
+    "entregables": [],
+    "requisitos": [],
+    "riesgos": [],
+    "estado": "Activo",
+    "image_url": null,
+    "image_status": "none"
+  },
+  {
+    "id": "40",
+    "nombre": "Venta Extra en Caja",
+    "descripcion": "Sugerencias upsell por ticket",
+    "problema": "Upsell no sistemático",
+    "outcome": "Subir margen por ticket (upsell)",
+    "tipoSolucion": [
+      "Agente IA",
+      "Integración"
+    ],
+    "sector": [
+      "Retail"
+    ],
+    "departamento": [
+      "Ventas"
+    ],
+    "complejidad": null,
+    "ttv": "2–4 sem",
+    "duracion_dias": null,
+    "precioSetupMin": null,
+    "precioSetupMax": null,
+    "precio_setup": null,
+    "precioMensualMin": null,
+    "precioMensualMax": null,
+    "precio_aprox": "≥1.500€ + (proyecto; alcance define)",
+    "entregables": [],
+    "requisitos": [],
+    "riesgos": [],
+    "estado": "Activo",
+    "image_url": null,
+    "image_status": "none"
+  },
+  {
+    "id": "41",
+    "nombre": "Facturas Sin Lío",
+    "descripcion": "Lectura + conciliación asistida",
+    "problema": "Conciliación manual",
+    "outcome": "Conciliar más rápido con menos errores",
+    "tipoSolucion": [
+      "Automatización",
+      "Integración"
+    ],
+    "sector": [
+      "Retail"
+    ],
+    "departamento": [
+      "Finanzas"
+    ],
+    "complejidad": null,
+    "ttv": "1–3 sem",
+    "duracion_dias": null,
+    "precioSetupMin": null,
+    "precioSetupMax": null,
+    "precio_setup": null,
+    "precioMensualMin": null,
+    "precioMensualMax": null,
+    "precio_aprox": "≥1.500€ + (según integraciones)",
+    "entregables": [],
+    "requisitos": [],
+    "riesgos": [],
+    "estado": "Activo",
+    "image_url": null,
+    "image_status": "none"
+  },
+  {
+    "id": "42",
+    "nombre": "Compra con Cabeza",
+    "descripcion": "Forecast simple por histórico",
+    "problema": "Compras “a ojo” (sobrecompra)",
+    "outcome": "Mejorar forecast y bajar sobrestock",
+    "tipoSolucion": [
+      "Dashboards",
+      "Integración"
+    ],
+    "sector": [
+      "Retail"
+    ],
+    "departamento": [
+      "Dirección"
+    ],
+    "complejidad": null,
+    "ttv": "2–4 sem",
+    "duracion_dias": null,
+    "precioSetupMin": null,
+    "precioSetupMax": null,
+    "precio_setup": null,
+    "precioMensualMin": null,
+    "precioMensualMax": null,
+    "precio_aprox": "≥1.500€ + (proyecto; alcance define)",
+    "entregables": [],
+    "requisitos": [],
+    "riesgos": [],
+    "estado": "Activo",
+    "image_url": null,
+    "image_status": "none"
+  },
+  {
+    "id": "43",
+    "nombre": "Pedidos Sin Errores",
+    "descripcion": "Validación automática de pedidos",
+    "problema": "Errores en pedidos a proveedor",
+    "outcome": "Reducir errores y urgencias",
+    "tipoSolucion": [
+      "Automatización",
+      "Integración"
+    ],
+    "sector": [
+      "Retail"
+    ],
+    "departamento": [
+      "Compras"
+    ],
+    "complejidad": null,
+    "ttv": "1–2 sem",
+    "duracion_dias": null,
+    "precioSetupMin": null,
+    "precioSetupMax": null,
+    "precio_setup": null,
+    "precioMensualMin": null,
+    "precioMensualMax": null,
+    "precio_aprox": "≥1.500€ (pack)",
+    "entregables": [],
+    "requisitos": [],
+    "riesgos": [],
+    "estado": "Activo",
+    "image_url": null,
+    "image_status": "none"
+  },
+  {
+    "id": "44",
+    "nombre": "Promos en 1 Hour",
+    "descripcion": "Repurpose + copies por promo",
+    "problema": "Creatividades lentas",
+    "outcome": "Sacar creatividades en horas, no días",
+    "tipoSolucion": [
+      "Agente IA"
+    ],
+    "sector": [
+      "Retail"
+    ],
+    "departamento": [
+      "Marketing"
+    ],
+    "complejidad": null,
+    "ttv": "1–2 sem",
+    "duracion_dias": null,
+    "precioSetupMin": null,
+    "precioSetupMax": null,
+    "precio_setup": null,
+    "precioMensualMin": null,
+    "precioMensualMax": null,
+    "precio_aprox": "≥1.500€ (pack)",
+    "entregables": [],
+    "requisitos": [],
+    "riesgos": [],
+    "estado": "Activo",
+    "image_url": null,
+    "image_status": "none"
+  },
+  {
+    "id": "45",
+    "nombre": "WhatsApp Ordenado",
+    "descripcion": "Bandeja inteligente + plantillas IA",
+    "problema": "WhatsApp devora horas",
+    "outcome": "Ahorrar horas y mejorar respuesta",
+    "tipoSolucion": [
+      "Agente IA",
+      "Integración"
+    ],
+    "sector": [
+      "Retail"
+    ],
+    "departamento": [
+      "Atención"
+    ],
+    "complejidad": null,
+    "ttv": "1–2 sem",
+    "duracion_dias": null,
+    "precioSetupMin": null,
+    "precioSetupMax": null,
+    "precio_setup": null,
+    "precioMensualMin": null,
+    "precioMensualMax": null,
+    "precio_aprox": "≥1.500€ (pack)",
+    "entregables": [],
+    "requisitos": [],
+    "riesgos": [],
+    "estado": "Activo",
+    "image_url": null,
+    "image_status": "none"
+  },
+  {
+    "id": "46",
+    "nombre": "Reactiva Clientes",
+    "descripcion": "Reactivación WhatsApp segmentada",
+    "problema": "Sin reactivación de clientes",
+    "outcome": "Reactivar y aumentar recurrencia",
+    "tipoSolucion": [
+      "Automatización",
+      "Integración"
+    ],
+    "sector": [
+      "Retail"
+    ],
+    "departamento": [
+      "Ventas"
+    ],
+    "complejidad": null,
+    "ttv": "1–2 sem",
+    "duracion_dias": null,
+    "precioSetupMin": null,
+    "precioSetupMax": null,
+    "precio_setup": null,
+    "precioMensualMin": null,
+    "precioMensualMax": null,
+    "precio_aprox": "≥1.500€ (pack)",
+    "entregables": [],
+    "requisitos": [],
+    "riesgos": [],
+    "estado": "Activo",
+    "image_url": null,
+    "image_status": "none"
+  },
+  {
+    "id": "47",
+    "nombre": "Evita Quiebres",
+    "descripcion": "Reposición + mínimos + alertas",
+    "problema": "Quiebres en tienda",
+    "outcome": "Reducir quiebres en lineal",
+    "tipoSolucion": [
+      "Automatización",
+      "Integración"
+    ],
+    "sector": [
+      "Retail"
+    ],
+    "departamento": [
+      "Operaciones"
+    ],
+    "complejidad": null,
+    "ttv": "1–3 sem",
+    "duracion_dias": null,
+    "precioSetupMin": null,
+    "precioSetupMax": null,
+    "precio_setup": null,
+    "precioMensualMin": null,
+    "precioMensualMax": null,
+    "precio_aprox": "≥1.500€ + (según integraciones)",
+    "entregables": [],
+    "requisitos": [],
+    "riesgos": [],
+    "estado": "Activo",
+    "image_url": null,
+    "image_status": "none"
+  },
+  {
+    "id": "48",
+    "nombre": "Respuesta Inmediata",
+    "descripcion": "Auto-reply + routing a CRM",
+    "problema": "Leads sin respuesta rápida",
+    "outcome": "Responder más rápido y cerrar más",
+    "tipoSolucion": [
+      "Automatización",
+      "Integración"
+    ],
+    "sector": [
+      "E-Commerce"
+    ],
+    "departamento": [
+      "Ventas"
+    ],
+    "complejidad": null,
+    "ttv": "1–2 sem",
+    "duracion_dias": null,
+    "precioSetupMin": null,
+    "precioSetupMax": null,
+    "precio_setup": null,
+    "precioMensualMin": null,
+    "precioMensualMax": null,
+    "precio_aprox": "≥1.500€ (pack)",
+    "entregables": [],
+    "requisitos": [],
+    "riesgos": [],
+    "estado": "Activo",
+    "image_url": null,
+    "image_status": "none"
+  },
+  {
+    "id": "49",
+    "nombre": "Panel de Ventas",
+    "descripcion": "Dashboard operativo (KPIs)",
+    "problema": "Reporting manual",
+    "outcome": "KPIs diarios en 1 click",
+    "tipoSolucion": [
+      "Dashboards",
+      "Integración"
+    ],
+    "sector": [
+      "E-Commerce"
+    ],
+    "departamento": [
+      "Dirección"
+    ],
+    "complejidad": null,
+    "ttv": "1–2 sem",
+    "duracion_dias": null,
+    "precioSetupMin": null,
+    "precioSetupMax": null,
+    "precio_setup": null,
+    "precioMensualMin": null,
+    "precioMensualMax": null,
+    "precio_aprox": "≥1.500€ (pack)",
+    "entregables": [],
+    "requisitos": [],
+    "riesgos": [],
+    "estado": "Activo",
+    "image_url": null,
+    "image_status": "none"
+  },
+  {
+    "id": "50",
+    "nombre": "Fichas que Venden",
+    "descripcion": "Generación fichas + QA",
+    "problema": "Fichas SEO lentas/pobres",
+    "outcome": "Acelerar contenido y SEO",
+    "tipoSolucion": [
+      "Agente IA",
+      "Integración"
+    ],
+    "sector": [
+      "E-Commerce"
+    ],
+    "departamento": [
+      "Marketing"
+    ],
+    "complejidad": null,
+    "ttv": "1–3 sem",
+    "duracion_dias": null,
+    "precioSetupMin": null,
+    "precioSetupMax": null,
+    "precio_setup": null,
+    "precioMensualMin": null,
+    "precioMensualMax": null,
+    "precio_aprox": "≥1.500€ + (según integraciones)",
+    "entregables": [],
+    "requisitos": [],
+    "riesgos": [],
+    "estado": "Activo",
+    "image_url": null,
+    "image_status": "none"
+  },
+  {
+    "id": "51",
+    "nombre": "Menos Devoluciones",
+    "descripcion": "Detección causas + checklist",
+    "problema": "Devoluciones repetidas",
+    "outcome": "Bajar devoluciones y coste operativo",
+    "tipoSolucion": [
+      "Automatización",
+      "Dashboards"
+    ],
+    "sector": [
+      "E-Commerce"
+    ],
+    "departamento": [
+      "Finanzas"
+    ],
+    "complejidad": null,
+    "ttv": "2–3 sem",
+    "duracion_dias": null,
+    "precioSetupMin": null,
+    "precioSetupMax": null,
+    "precio_setup": null,
+    "precioMensualMin": null,
+    "precioMensualMax": null,
+    "precio_aprox": "≥1.500€ + (según integraciones)",
+    "entregables": [],
+    "requisitos": [],
+    "riesgos": [],
+    "estado": "Activo",
+    "image_url": null,
+    "image_status": "none"
+  },
+  {
+    "id": "52",
+    "nombre": "Alerta Sin Stock",
+    "descripcion": "Alertas + forecast simple",
+    "problema": "Roturas de stock",
+    "outcome": "Reducir stockouts y ventas perdidas",
+    "tipoSolucion": [
+      "Automatización",
+      "Integración"
+    ],
+    "sector": [
+      "E-Commerce"
+    ],
+    "departamento": [
+      "Operaciones"
+    ],
+    "complejidad": null,
+    "ttv": "1–3 sem",
+    "duracion_dias": null,
+    "precioSetupMin": null,
+    "precioSetupMax": null,
+    "precio_setup": null,
+    "precioMensualMin": null,
+    "precioMensualMax": null,
+    "precio_aprox": "≥1.500€ + (según integraciones)",
+    "entregables": [],
+    "requisitos": [],
+    "riesgos": [],
+    "estado": "Activo",
+    "image_url": null,
+    "image_status": "none"
+  },
+  {
+    "id": "53",
+    "nombre": "Recomendación de Compra",
+    "descripcion": "Recomendador por intención",
+    "problema": "Baja conversión por recomendación pobre",
+    "outcome": "Subir conversión con recomendación",
+    "tipoSolucion": [
+      "Agente IA",
+      "Integración"
+    ],
+    "sector": [
+      "E-Commerce"
+    ],
+    "departamento": [
+      "Ventas"
+    ],
+    "complejidad": null,
+    "ttv": "2–4 sem",
+    "duracion_dias": null,
+    "precioSetupMin": null,
+    "precioSetupMax": null,
+    "precio_setup": null,
+    "precioMensualMin": null,
+    "precioMensualMax": null,
+    "precio_aprox": "≥1.500€ + (proyecto; alcance define)",
+    "entregables": [],
+    "requisitos": [],
+    "riesgos": [],
+    "estado": "Activo",
+    "image_url": null,
+    "image_status": "none"
+  },
+  {
+    "id": "54",
+    "nombre": "Soporte Rápido",
+    "descripcion": "Clasificación + respuestas sugeridas",
+    "problema": "Soporte lento y caro",
+    "outcome": "Reducir tiempo de soporte y SLA",
+    "tipoSolucion": [
+      "Agente IA",
+      "Integración"
+    ],
+    "sector": [
+      "E-Commerce"
+    ],
+    "departamento": [
+      "Soporte"
+    ],
+    "complejidad": null,
+    "ttv": "1–2 sem",
+    "duracion_dias": null,
+    "precioSetupMin": null,
+    "precioSetupMax": null,
+    "precio_setup": null,
+    "precioMensualMin": null,
+    "precioMensualMax": null,
+    "precio_aprox": "≥1.500€ (pack)",
+    "entregables": [],
+    "requisitos": [],
+    "riesgos": [],
+    "estado": "Activo",
+    "image_url": null,
+    "image_status": "none"
+  },
+  {
+    "id": "54",
+    "nombre": "Diagnóstico Operativo y Roadmap IA",
+    "descripcion": "Análisis profundo de procesos para PYMEs (>10 empleados) con procesos manuales caóticos, desorden de datos o en fase de hipercrecimiento.",
+    "problema": "Incertidumbre sobre dónde automatizar, falta de visibilidad de KPIs en tiempo real y caos operativo.",
+    "outcome": "Roadmap de eficiencia y plan de acción priorizado por ROI.",
+    "tipoSolucion": [
+      "Consultoría",
+      "Pack"
+    ],
+    "sector": [
+      "Agencias Marketing",
+      "Distribución",
+      "E-Commerce",
+      "Logística",
+      "Multisector"
+    ],
+    "departamento": [
+      "General",
+      "Operaciones",
+      "Ventas",
+      "Administración"
+    ],
+    "complejidad": 3,
+    "ttv": "1 sem",
+    "duracion_dias": 7,
+    "precio_setup": 500,
+    "precio_mrr": 0,
+    "precio_aprox": "500€",
+    "entregables": [
+      "Propuesta de plan de acción",
+      "Roadmap priorizado",
+      "Definición de KPIs antes/después"
+    ],
+    "requisitos": [
+      "Detección de al menos 3 procesos críticos automatizables con un ROI estimado claro",
+      "Acceso a decisores para entrevistas",
+      "Disponibilidad de datos históricos"
+    ],
+    "riesgos": [
+      "Baja disponibilidad del cliente para entrevistas",
+      "Información incompleta o procesos no documentados",
+      "Resistencia al cambio del equipo operativo"
+    ],
+    "estado": "Activo",
+    "image_status": "none"
+  }
+]

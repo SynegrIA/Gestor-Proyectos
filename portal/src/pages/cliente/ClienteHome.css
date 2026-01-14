@@ -1,0 +1,213 @@
+.cliente-home {
+    max-width: 1200px;
+}
+
+/* Grid de tipos de producto */
+.productos-grid {
+    display: flex;
+    gap: var(--space-4);
+    margin-bottom: var(--space-6);
+    flex-wrap: wrap;
+}
+
+.producto-card {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    padding: var(--space-4);
+    background: var(--bg-primary);
+    border-radius: var(--radius-lg);
+    border-left: 4px solid var(--primary-500);
+    box-shadow: var(--shadow-sm);
+    min-width: 200px;
+}
+
+.producto-card__icon {
+    font-size: var(--text-2xl);
+}
+
+.producto-card__count {
+    font-size: var(--text-2xl);
+    font-weight: var(--font-bold);
+    color: var(--text-primary);
+}
+
+.producto-card__name {
+    font-size: var(--text-xs);
+    color: var(--text-muted);
+}
+
+/* Lista de proyectos */
+.proyectos-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+}
+
+.proyecto-card {
+    background: var(--bg-primary);
+    border-radius: var(--radius-lg);
+    padding: var(--space-5);
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--border-color);
+    transition: box-shadow 0.2s, transform 0.2s;
+}
+
+.proyecto-card:hover {
+    box-shadow: var(--shadow-md);
+}
+
+.proyecto-card--alerta {
+    border-left: 4px solid var(--danger-500);
+    background: linear-gradient(to right, var(--danger-50) 0%, var(--bg-primary) 10%);
+}
+
+.proyecto-card__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--space-3);
+}
+
+.proyecto-card__tipo {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+}
+
+.proyecto-card__tipo-icon {
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--radius-md);
+    font-size: var(--text-sm);
+}
+
+.proyecto-card__tipo-name {
+    font-size: var(--text-sm);
+    color: var(--text-muted);
+    font-weight: var(--font-medium);
+}
+
+.proyecto-card__status {
+    font-size: var(--text-sm);
+    font-weight: var(--font-semibold);
+    padding: var(--space-1) var(--space-3);
+    border-radius: var(--radius-full);
+}
+
+.status--in-progress {
+    background: var(--primary-100);
+    color: var(--primary-700);
+}
+
+.status--paused {
+    background: var(--danger-100);
+    color: var(--danger-700);
+}
+
+.status--delivered {
+    background: var(--success-100);
+    color: var(--success-700);
+}
+
+.proyecto-card__title {
+    font-size: var(--text-lg);
+    font-weight: var(--font-semibold);
+    margin: 0 0 var(--space-4);
+    color: var(--text-primary);
+}
+
+.proyecto-card__meta {
+    display: flex;
+    gap: var(--space-6);
+    margin-bottom: var(--space-4);
+    flex-wrap: wrap;
+}
+
+.proyecto-card__meta-item {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+}
+
+.proyecto-card__meta-item .label {
+    font-size: var(--text-xs);
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.proyecto-card__meta-item .value {
+    font-size: var(--text-sm);
+    color: var(--text-primary);
+    font-weight: var(--font-medium);
+}
+
+.proyecto-card__progress {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    margin-bottom: var(--space-4);
+}
+
+.proyecto-card__progress-bar {
+    flex: 1;
+    height: 8px;
+    background: var(--gray-200);
+    border-radius: var(--radius-full);
+    overflow: hidden;
+}
+
+.proyecto-card__progress-fill {
+    height: 100%;
+    background: var(--gradient-primary);
+    border-radius: var(--radius-full);
+    transition: width 0.3s ease;
+}
+
+.proyecto-card__progress-text {
+    font-size: var(--text-sm);
+    font-weight: var(--font-semibold);
+    color: var(--text-primary);
+    min-width: 40px;
+    text-align: right;
+}
+
+.proyecto-card__alertas {
+    margin-bottom: var(--space-4);
+}
+
+.proyecto-card__alerta {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-2) var(--space-3);
+    background: var(--danger-50);
+    color: var(--danger-700);
+    border-radius: var(--radius-md);
+    font-size: var(--text-sm);
+}
+
+.proyecto-card__actions {
+    display: flex;
+    justify-content: flex-end;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .productos-grid {
+        flex-direction: column;
+    }
+
+    .producto-card {
+        min-width: auto;
+    }
+
+    .proyecto-card__meta {
+        flex-direction: column;
+        gap: var(--space-2);
+    }
+}

@@ -1,207 +1,217 @@
 import { useMemo } from 'react'
-import { 
-    FiTarget, FiPieChart, FiBarChart2, FiTrendingUp, FiActivity,
-    FiCheckCircle, FiAlertCircle, FiClock, FiDollarSign, FiInfo,
-    FiLayout, FiDownload, FiShare2
-} from 'react-icons/fi'
-import { 
-    BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, 
-    PieChart, Pie, Cell, ScatterChart, Scatter, ZAxis, ReferenceLine, LabelList
-} from 'recharts'
+import { useNavigate, useParams } from 'react-router-dom'
+import { FiInfo, FiArrowRight, FiMessageSquare, FiCalendar, FiUpload, FiCheckCircle } from 'react-icons/fi'
+import { PieChart, Pie, Cell, ResponsiveContainer } from 'recharts'
 import { useProjectData } from '../../context/ProjectContext'
 
-// COMPONENTES HELPER
-const KPI = ({ label, value, icon: IconComponent, trend, suffix = "" }) => (
-    <div className="bg-white p-6 rounded-3xl border border-[var(--border-color)] shadow-sm hover:shadow-xl transition-all group">
-        <div className="flex items-center justify-between mb-4">
-            <div className="w-10 h-10 rounded-xl bg-[var(--surface-50)] flex items-center justify-center text-[var(--primary-600)] group-hover:bg-[var(--primary-500)] group-hover:text-white transition-colors">
-                {IconComponent && <IconComponent size={20} />}
-            </div>
-            {trend && (
-                <span className={`text-[10px] font-black px-2 py-0.5 rounded-full ${trend > 0 ? 'bg-emerald-100 text-emerald-700' : 'bg-rose-100 text-rose-700'}`}>
-                    {trend > 0 ? '+' : ''}{trend}%
-                </span>
-            )}
+// ═══════════════════════════════════════════════════════════════════════════════
+// DATOS MOCK - Exactos de la imagen de referencia
+// ═══════════════════════════════════════════════════════════════════════════════
+const MOCK_DATA = {
+    kpis: {
+        ahorroAnual: { value: '€45.2K', trend: '+15%', detail: 'vs muestra inicial (€39.1K)' },
+        mejoraEficiencia: { value: '23%', trend: '+8%', detail: 'vs estimación inicial (15%)' },
+        tiempoProceso: { value: '12.5h', trend: '-3.2h', detail: 'vs mes anterior (15.7h)' }
+    },
+    distribucion: [
+        { name: 'Presupuestos', value: 25000, percent: '55.3%', display: '€25K' },
+        { name: 'Fugas', value: 15000, percent: '33.2%', display: '€15K' },
+        { name: 'CRM', value: 8200, percent: '11.5%', display: '€8.2K' }
+    ],
+    top3: [
+        { id: 1, titulo: 'Seguimiento automático de presupuestos', ahorro: '€25.0K/año', esfuerzo: '35h', payback: '2 meses' },
+        { id: 2, titulo: 'Dashboard de Control de Fugas', ahorro: '€15.0K/año', esfuerzo: '25h', payback: '1.8 meses' },
+        { id: 3, titulo: 'Limpieza de Datos CRM', ahorro: '€8.2K/año', esfuerzo: '60h', payback: '8 meses' }
+    ],
+    siguientePaso: { titulo: 'Revisión final', fecha: '15 Enero 2024, 10:00 - 11:00' },
+    acciones: [
+        { text: 'Sube ERP 12 meses', icon: FiUpload, link: 'data-room' },
+        { text: 'Confirma el tiempo del proceso X', icon: FiCheckCircle, link: 'supuestos-medicion' },
+        { text: 'Responde a comentario en iniciativa #2', icon: FiMessageSquare, link: 'iniciativas/2' }
+    ]
+}
+
+const DONUT_COLORS = ['#6366f1', '#a78bfa', '#c4b5fd']
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// COMPONENTE KPI CARD
+// ═══════════════════════════════════════════════════════════════════════════════
+const KPICard = ({ label, value, trend, detail }) => (
+    <div style={{
+        background: 'linear-gradient(135deg, #6366f1 0%, #4f46e5 100%)',
+        borderRadius: '16px',
+        padding: '24px',
+        color: 'white',
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'space-between',
+        minHeight: '140px',
+        boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
+    }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '14px', opacity: 0.9 }}>
+            {label} <FiInfo size={14} style={{ opacity: 0.6 }} />
         </div>
-        <div className="text-[10px] font-black text-[var(--text-muted)] uppercase tracking-widest mb-1">{label}</div>
-        <div className="text-2xl font-black text-[var(--text-normal)] font-mono">
-            {value}{suffix}
+        <div style={{ fontSize: '36px', fontWeight: 700, margin: '8px 0' }}>{value}</div>
+        <div style={{ fontSize: '12px', opacity: 0.8, display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <span style={{ color: trend.startsWith('-') ? '#fbbf24' : '#4ade80' }}>↗ {trend}</span>
+            <span style={{ opacity: 0.7 }}>{detail}</span>
         </div>
     </div>
 )
 
+// ═══════════════════════════════════════════════════════════════════════════════
+// COMPONENTE PRINCIPAL
+// ═══════════════════════════════════════════════════════════════════════════════
 export default function DiagnosticoDashboard() {
     const { projectData } = useProjectData()
-    const { matriz, iniciativas } = projectData
+    const { iniciativas } = projectData
+    const navigate = useNavigate()
+    const { id: projectId } = useParams()
 
-    // PREPARACIÓN DE DATOS PARA CHARTS
-    const dashboardData = useMemo(() => {
-        const activeInis = iniciativas.filter(i => !i.archivada)
-        const top3 = activeInis.filter(i => i.isTop)
-        const published = activeInis.filter(i => i.estado_visibilidad === 'PUBLICADA')
-        
-        // CÁLCULOS KPI
-        const totalROI = activeInis.reduce((acc, curr) => acc + (curr.roi_eur_anual || 0), 0)
-        const avgEfficiency = activeInis.length ? activeInis.reduce((acc, curr) => acc + (curr.roi_eur_anual / (curr.esfuerzo_horas || 1)), 0) / activeInis.length : 0
-        const totalEffort = activeInis.reduce((acc, curr) => acc + (curr.esfuerzo_horas || 0), 0)
-        const approvalRate = published.length ? Math.round((published.filter(i => i.estado_cliente === 'APROBADA').length / published.length) * 100) : 0
-
-        // DATOS CHART: IMPACTO VS ESFUERZO (Solo publicadas)
-        const matrixPoints = published.map(i => ({
-            name: i.titulo,
-            impact: i.roi_eur_anual,
-            effort: i.esfuerzo_horas,
-            payback: i.payback_meses,
-            id: i.id
-        }))
-
-        // DATOS CHART: ROI POR ÁREA
-        const areaDataRaw = published.reduce((acc, curr) => {
-            acc[curr.area] = (acc[curr.area] || 0) + curr.roi_eur_anual
-            return acc
-        }, {})
-        const areaData = Object.entries(areaDataRaw).map(([name, value]) => ({ name, value }))
-
-        return { totalROI, avgEfficiency, totalEffort, approvalRate, matrixPoints, areaData, totalCount: activeInis.length, top3Count: top3.length }
+    // Usar datos reales si existen, sino mock
+    const topIniciativas = useMemo(() => {
+        const real = iniciativas?.filter(i => i.isTop).slice(0, 3)
+        if (real && real.length === 3) {
+            return real.map((ini) => ({
+                id: ini.id,
+                titulo: ini.titulo,
+                ahorro: `€${(ini.roi_eur_anual / 1000).toFixed(1)}K/año`,
+                esfuerzo: `${ini.esfuerzo_horas}h`,
+                payback: `${ini.payback_meses} meses`
+            }))
+        }
+        return MOCK_DATA.top3
     }, [iniciativas])
 
-    // CÁLCULO CONFIANZA ROI
-    const confianzaROI = useMemo(() => {
-        const supuestos = projectData.supuestos || []
-        if (supuestos.length === 0) return { level: 'N/A', percent: 0, color: 'gray' }
-        
-        const validados = supuestos.filter(s => s.estado === 'VALIDADO').length
-        const percent = Math.round((validados / supuestos.length) * 100)
-        
-        if (percent >= 70) return { level: 'Alta', percent, color: 'emerald' }
-        if (percent >= 40) return { level: 'Media', percent, color: 'amber' }
-        return { level: 'Baja', percent, color: 'rose' }
-    }, [projectData.supuestos])
-
-    const COLORS = ['#2563eb', '#0891b2', '#7c3aed', '#db2777', '#f59e0b', '#10b981']
+    const distribucionData = useMemo(() => {
+        const published = iniciativas?.filter(i => i.estado_visibilidad === 'PUBLICADA') || []
+        if (published.length > 0) {
+            const byArea = {}
+            published.forEach(ini => {
+                if (!byArea[ini.area]) byArea[ini.area] = 0
+                byArea[ini.area] += ini.roi_eur_anual || 0
+            })
+            const total = Object.values(byArea).reduce((a, b) => a + b, 0)
+            return Object.entries(byArea)
+                .sort((a, b) => b[1] - a[1])
+                .slice(0, 3)
+                .map(([name, value]) => ({
+                    name,
+                    value,
+                    percent: `${((value / total) * 100).toFixed(1)}%`,
+                    display: `€${(value / 1000).toFixed(0)}K`
+                }))
+        }
+        return MOCK_DATA.distribucion
+    }, [iniciativas])
 
     return (
-        <div className="fade-in pb-20 space-y-8">
-            {/* HEADER ACCIONES */}
-            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
-                <div>
-                   <div className="flex items-center gap-2 mb-2">
-                        <span className="text-[10px] font-black bg-[var(--primary-500)] text-white px-2 py-0.5 rounded uppercase tracking-widest">Diagnóstico</span>
-                        <span className="text-[10px] font-bold text-[var(--text-muted)] uppercase tracking-wider italic">VISTA RESUMEN EJECUTIVO</span>
-                   </div>
-                   <h1 className="text-3xl font-black text-[var(--text-normal)] tracking-tight">Panel de Resultados</h1>
-                </div>
-                <div className="flex gap-3">
-                    <button className="btn bg-white hover:bg-[var(--surface-50)] border-[var(--border-color)] text-[var(--text-normal)] rounded-xl flex items-center gap-2 px-6 py-2.5 font-bold shadow-sm">
-                        <FiDownload /> Exportar PDF
-                    </button>
-                    <button className="btn btn--primary rounded-xl flex items-center gap-2 px-6 py-2.5 shadow-lg shadow-[var(--primary-500)]/20 animate-pulse-slow">
-                        <FiShare2 /> Presentar
-                    </button>
-                </div>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '32px', paddingBottom: '40px' }}>
+            
+            {/* ═══════════════════════════════════════════════════════════════════ */}
+            {/* A) HEADER: Título + Subtítulo */}
+            {/* ═══════════════════════════════════════════════════════════════════ */}
+            <div>
+                <h1 style={{ fontSize: '28px', fontWeight: 800, color: '#1e293b', marginBottom: '4px' }}>
+                    Dashboard
+                </h1>
+                <p style={{ fontSize: '14px', color: '#64748b' }}>
+                    Resumen ejecutivo de tu diagnóstico
+                </p>
             </div>
 
-            {/* GRID DE KPIS */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                <KPI label="Impacto Total Anual" value={new Intl.NumberFormat('es-ES', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }).format(dashboardData.totalROI)} icon={FiTrendingUp} trend={12} />
-                <div className="bg-white p-6 rounded-3xl border border-[var(--border-color)] shadow-sm hover:shadow-xl transition-all group">
-                    <div className="flex items-center justify-between mb-4">
-                        <div className={`w-10 h-10 rounded-xl bg-${confianzaROI.color}-50 flex items-center justify-center text-${confianzaROI.color}-600 group-hover:bg-${confianzaROI.color}-500 group-hover:text-white transition-colors`}>
-                            <FiShield size={20} />
-                        </div>
-                        <span className={`text-[10px] font-black px-2 py-0.5 rounded-full bg-${confianzaROI.color}-100 text-${confianzaROI.color}-700`}>
-                            {confianzaROI.percent}% prec.
-                        </span>
-                    </div>
-                    <div className="text-[10px] font-black text-[var(--text-muted)] uppercase tracking-widest mb-1">Confianza ROI</div>
-                    <div className={`text-2xl font-black text-${confianzaROI.color}-600 font-mono text-shadow-sm`}>
-                        {confianzaROI.level}
-                    </div>
-                </div>
-                <KPI label="Esfuerzo Estimado" value={Math.round(dashboardData.totalEffort)} icon={FiActivity} suffix=" horas" />
-                <KPI label="Tasa de Aceptación" value={dashboardData.approvalRate} icon={FiBarChart2} suffix="%" />
+            {/* ═══════════════════════════════════════════════════════════════════ */}
+            {/* B) FILA 1: KPI Cards (3 columnas) */}
+            {/* ═══════════════════════════════════════════════════════════════════ */}
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '24px' }}>
+                <KPICard 
+                    label="Ahorro anual estimado"
+                    value={MOCK_DATA.kpis.ahorroAnual.value}
+                    trend={MOCK_DATA.kpis.ahorroAnual.trend}
+                    detail={MOCK_DATA.kpis.ahorroAnual.detail}
+                />
+                <KPICard 
+                    label="Mejora eficiencia"
+                    value={MOCK_DATA.kpis.mejoraEficiencia.value}
+                    trend={MOCK_DATA.kpis.mejoraEficiencia.trend}
+                    detail={MOCK_DATA.kpis.mejoraEficiencia.detail}
+                />
+                <KPICard 
+                    label="Tiempo por proceso"
+                    value={MOCK_DATA.kpis.tiempoProceso.value}
+                    trend={MOCK_DATA.kpis.tiempoProceso.trend}
+                    detail={MOCK_DATA.kpis.tiempoProceso.detail}
+                />
             </div>
 
-            {/* FILA DE GRÁFICOS PRINCIPALES */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                {/* Cuadrante de Iniciativas (Scatter) */}
-                <div className="card p-8 bg-white border border-[var(--border-color)] shadow-sm rounded-[2rem]">
-                    <div className="flex items-center justify-between mb-8">
-                        <div>
-                            <h3 className="text-lg font-black text-[var(--text-normal)] leading-none mb-2">Portfolio de Iniciativas</h3>
-                            <p className="text-xs text-[var(--text-muted)] font-medium">Relación Impacto Económico vs Esfuerzo de Implementación</p>
-                        </div>
-                        <FiInfo className="text-[var(--text-muted)] cursor-help" />
-                    </div>
-
-                    <div className="h-[400px]">
-                        <ResponsiveContainer width="100%" height="100%">
-                            <ScatterChart margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
-                                <CartesianGrid strokeDasharray="3 3" stroke="var(--border-color)" opacity={0.5} />
-                                <XAxis 
-                                    type="number" 
-                                    dataKey="effort" 
-                                    name="Esfuerzo" 
-                                    unit="h" 
-                                    label={{ value: 'Esfuerzo (Horas)', position: 'insideBottom', offset: -10, fontSize: 10, fontWeight: 900 }} 
-                                />
-                                <YAxis 
-                                    type="number" 
-                                    dataKey="impact" 
-                                    name="ROI" 
-                                    unit="€" 
-                                    label={{ value: 'Impacto (€)', angle: -90, position: 'insideLeft', fontSize: 10, fontWeight: 900 }} 
-                                />
-                                <ZAxis type="number" dataKey="payback" range={[50, 400]} name="Payback" />
-                                <Tooltip cursor={{ strokeDasharray: '3 3' }} />
-                                <Scatter data={dashboardData.matrixPoints} fill="var(--primary-500)">
-                                    {dashboardData.matrixPoints.map((entry, index) => (
-                                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                                    ))}
-                                    <LabelList dataKey="name" position="top" style={{ fontSize: '9px', fontWeight: 'bold', fill: 'var(--text-muted)' }} offset={10} />
-                                </Scatter>
-                            </ScatterChart>
-                        </ResponsiveContainer>
+            {/* ═══════════════════════════════════════════════════════════════════ */}
+            {/* C) FILA 2: Resumen Ejecutivo + Distribución del Ahorro */}
+            {/* ═══════════════════════════════════════════════════════════════════ */}
+            <div style={{ display: 'grid', gridTemplateColumns: '1.5fr 1fr', gap: '24px' }}>
+                
+                {/* Card Resumen Ejecutivo */}
+                <div style={{
+                    background: 'white',
+                    borderRadius: '16px',
+                    padding: '32px',
+                    border: '1px solid #e2e8f0'
+                }}>
+                    <h3 style={{ fontSize: '16px', fontWeight: 700, color: '#1e293b', marginBottom: '20px' }}>
+                        Resumen Ejecutivo
+                    </h3>
+                    <div style={{ fontSize: '14px', lineHeight: 1.7, color: '#475569' }}>
+                        <p style={{ marginBottom: '16px' }}>
+                            Tras analizar <strong>5 departamentos y 23 procesos</strong>, hemos identificado <strong>3 iniciativas prioritarias</strong> que 
+                            pueden generar un ahorro de <strong>€45.2K anuales</strong> con una inversión inicial de €12K y payback de 3.2 meses.
+                        </p>
+                        <p>
+                            Las principales áreas de mejora son: <strong>facturación manual, gestión de pedidos y reporting comercial.</strong>
+                        </p>
                     </div>
                 </div>
 
-                {/* Distribución por Áreas (Donut) */}
-                <div className="card p-8 bg-white border border-[var(--border-color)] shadow-sm rounded-[2rem]">
-                    <div className="flex items-center justify-between mb-8">
-                        <div>
-                            <h3 className="text-lg font-black text-[var(--text-normal)] leading-none mb-2">Impacto por Área</h3>
-                            <p className="text-xs text-[var(--text-muted)] font-medium">Distribución del ROI proyectado según departamento/proceso</p>
+                {/* Card Distribución del Ahorro */}
+                <div style={{
+                    background: 'white',
+                    borderRadius: '16px',
+                    padding: '32px',
+                    border: '1px solid #e2e8f0'
+                }}>
+                    <h3 style={{ fontSize: '16px', fontWeight: 700, color: '#1e293b', marginBottom: '20px' }}>
+                        Distribución del Ahorro
+                    </h3>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '24px' }}>
+                        {/* Donut Chart */}
+                        <div style={{ width: '120px', height: '120px' }}>
+                            <ResponsiveContainer width="100%" height="100%">
+                                <PieChart>
+                                    <Pie
+                                        data={distribucionData}
+                                        innerRadius={35}
+                                        outerRadius={55}
+                                        paddingAngle={3}
+                                        dataKey="value"
+                                        stroke="none"
+                                    >
+                                        {distribucionData.map((entry, index) => (
+                                            <Cell key={`cell-${index}`} fill={DONUT_COLORS[index]} />
+                                        ))}
+                                    </Pie>
+                                </PieChart>
+                            </ResponsiveContainer>
                         </div>
-                    </div>
-
-                    <div className="h-[400px] flex items-center">
-                        <ResponsiveContainer width="100%" height="100%">
-                            <PieChart>
-                                <Pie
-                                    data={dashboardData.areaData}
-                                    cx="50%"
-                                    cy="50%"
-                                    innerRadius={80}
-                                    outerRadius={120}
-                                    paddingAngle={8}
-                                    dataKey="value"
-                                >
-                                    {dashboardData.areaData.map((entry, index) => (
-                                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                                    ))}
-                                </Pie>
-                                <Tooltip />
-                            </PieChart>
-                        </ResponsiveContainer>
-                        <div className="pr-4 border-l border-[var(--border-color)] pl-8 space-y-4">
-                            {dashboardData.areaData.map((entry, index) => (
-                                <div key={entry.name} className="flex items-center gap-3">
-                                    <div className="w-3 h-3 rounded-full" style={{ backgroundColor: COLORS[index % COLORS.length] }}></div>
-                                    <div>
-                                        <div className="text-[10px] font-bold text-[var(--text-normal)] leading-none mb-1">{entry.name}</div>
-                                        <div className="text-xs font-black text-[var(--text-muted)] font-mono">
-                                            {Math.round((entry.value / dashboardData.totalROI) * 100)}%
-                                        </div>
+                        {/* Leyenda */}
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', flex: 1 }}>
+                            {distribucionData.map((item, index) => (
+                                <div key={item.name} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                        <div style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: DONUT_COLORS[index] }}></div>
+                                        <span style={{ fontSize: '13px', color: '#475569' }}>{item.name}</span>
+                                    </div>
+                                    <div style={{ textAlign: 'right' }}>
+                                        <span style={{ fontSize: '13px', fontWeight: 600, color: '#1e293b' }}>{item.display}</span>
+                                        <br />
+                                        <span style={{ fontSize: '11px', color: '#94a3b8' }}>{item.percent}</span>
                                     </div>
                                 </div>
                             ))}
@@ -210,46 +220,236 @@ export default function DiagnosticoDashboard() {
                 </div>
             </div>
 
-            {/* SECCIÓN INFERIOR: MATRIX STATUS + NEXT STEPS */}
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                {/* Scoreboard Procesos */}
-                <div className="lg:col-span-2 card p-8 bg-white border border-[var(--border-color)] shadow-sm rounded-[2rem]">
-                    <h3 className="text-lg font-black text-[var(--text-normal)] mb-6">Eficiencia de Procesos Críticos</h3>
-                    <div className="space-y-6">
-                        {matriz.slice(0, 5).map(area => (
-                            <div key={area.id} className="space-y-2">
-                                <div className="flex justify-between items-end">
-                                    <span className="text-xs font-bold text-[var(--text-normal)] uppercase tracking-wider">{area.area_proceso}</span>
-                                    <span className="text-[10px] font-black text-[var(--primary-600)] font-mono">{area.puntos.length} Iniciativas</span>
+            {/* ═══════════════════════════════════════════════════════════════════ */}
+            {/* D) SECCIÓN TOP 3 INICIATIVAS */}
+            {/* ═══════════════════════════════════════════════════════════════════ */}
+            <div>
+                {/* Header de sección */}
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '20px' }}>
+                    <div>
+                        <h2 style={{ fontSize: '18px', fontWeight: 700, color: '#1e293b', marginBottom: '4px' }}>
+                            Top 3 Iniciativas
+                        </h2>
+                        <p style={{ fontSize: '13px', color: '#64748b' }}>
+                            Impacto inmediato y retorno rápido
+                        </p>
+                    </div>
+                    <button 
+                        onClick={() => navigate(`/cliente/diagnostico/${projectId}/iniciativas`)}
+                        style={{
+                            background: '#6366f1',
+                            color: 'white',
+                            border: 'none',
+                            borderRadius: '10px',
+                            padding: '10px 20px',
+                            fontSize: '13px',
+                            fontWeight: 600,
+                            cursor: 'pointer',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '8px'
+                        }}
+                    >
+                        Revisar Top 3 ahora <FiArrowRight size={14} />
+                    </button>
+                </div>
+
+                {/* 3 Cards de iniciativas */}
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '24px' }}>
+                    {topIniciativas.map((ini, idx) => (
+                        <div key={ini.id} style={{
+                            background: 'white',
+                            borderRadius: '16px',
+                            padding: '24px',
+                            border: '1px solid #e2e8f0',
+                            display: 'flex',
+                            flexDirection: 'column',
+                            justifyContent: 'space-between',
+                            position: 'relative',
+                            minHeight: '200px'
+                        }}>
+                            {/* Badge #1, #2, #3 */}
+                            <div style={{
+                                position: 'absolute',
+                                top: '16px',
+                                right: '16px',
+                                width: '28px',
+                                height: '28px',
+                                borderRadius: '50%',
+                                background: '#eef2ff',
+                                color: '#6366f1',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                fontSize: '11px',
+                                fontWeight: 800
+                            }}>
+                                #{idx + 1}
+                            </div>
+
+                            {/* Título */}
+                            <h4 style={{ 
+                                fontSize: '14px', 
+                                fontWeight: 600, 
+                                color: '#1e293b', 
+                                marginBottom: '24px',
+                                paddingRight: '40px',
+                                lineHeight: 1.4
+                            }}>
+                                {ini.titulo}
+                            </h4>
+
+                            {/* Métricas */}
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginBottom: '24px' }}>
+                                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '13px' }}>
+                                    <span style={{ color: '#64748b' }}>Ahorro</span>
+                                    <span style={{ fontWeight: 600, color: '#1e293b' }}>{ini.ahorro}</span>
                                 </div>
-                                <div className="h-2 w-full bg-[var(--surface-100)] rounded-full overflow-hidden flex">
-                                    <div 
-                                        className="h-full bg-[var(--primary-500)]" 
-                                        style={{ width: `${Math.min(100, (area.roi_potencial / dashboardData.totalROI) * 400)}%` }}
-                                    ></div>
+                                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '13px' }}>
+                                    <span style={{ color: '#64748b' }}>Esfuerzo</span>
+                                    <span style={{ fontWeight: 600, color: '#1e293b' }}>{ini.esfuerzo}</span>
                                 </div>
+                                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '13px' }}>
+                                    <span style={{ color: '#64748b' }}>Payback</span>
+                                    <span style={{ fontWeight: 600, color: '#1e293b' }}>{ini.payback}</span>
+                                </div>
+                            </div>
+
+                            {/* Footer con acciones */}
+                            <div style={{ 
+                                borderTop: '1px solid #e2e8f0', 
+                                paddingTop: '16px', 
+                                display: 'flex', 
+                                justifyContent: 'space-between',
+                                alignItems: 'center'
+                            }}>
+                                <button 
+                                    onClick={() => navigate(`/cliente/diagnostico/${projectId}/iniciativas/${ini.id}`)}
+                                    style={{ 
+                                        background: 'none', 
+                                        border: 'none', 
+                                        color: '#64748b', 
+                                        fontSize: '12px', 
+                                        fontWeight: 500,
+                                        cursor: 'pointer'
+                                    }}
+                                >
+                                    Ver ficha
+                                </button>
+                                <button style={{ 
+                                    background: 'none', 
+                                    border: 'none', 
+                                    color: '#64748b', 
+                                    fontSize: '12px', 
+                                    fontWeight: 500,
+                                    cursor: 'pointer',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: '6px'
+                                }}>
+                                    <FiMessageSquare size={14} /> Comentar
+                                </button>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            </div>
+
+            {/* ═══════════════════════════════════════════════════════════════════ */}
+            {/* E) FILA INFERIOR: Siguiente Paso + Lo que necesitamos */}
+            {/* ═══════════════════════════════════════════════════════════════════ */}
+            <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 1fr', gap: '24px' }}>
+                
+                {/* Card Siguiente Paso */}
+                <div style={{
+                    background: '#f5f3ff',
+                    borderRadius: '16px',
+                    padding: '28px 32px',
+                    border: '1px solid #e0e7ff',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between'
+                }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
+                        <div style={{
+                            width: '48px',
+                            height: '48px',
+                            borderRadius: '12px',
+                            background: 'white',
+                            border: '1px solid #e2e8f0',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center'
+                        }}>
+                            <FiCalendar size={22} color="#475569" />
+                        </div>
+                        <div>
+                            <h3 style={{ fontSize: '16px', fontWeight: 700, color: '#1e293b', marginBottom: '4px' }}>
+                                Siguiente paso: {MOCK_DATA.siguientePaso.titulo}
+                            </h3>
+                            <p style={{ fontSize: '13px', color: '#64748b' }}>
+                                {MOCK_DATA.siguientePaso.fecha}
+                            </p>
+                        </div>
+                    </div>
+                    <button style={{
+                        background: 'white',
+                        border: '1px solid #c7d2fe',
+                        borderRadius: '10px',
+                        padding: '10px 20px',
+                        color: '#6366f1',
+                        fontSize: '13px',
+                        fontWeight: 600,
+                        cursor: 'pointer'
+                    }}>
+                        Ver agenda
+                    </button>
+                </div>
+
+                {/* Card Lo que necesitamos de ti */}
+                <div style={{
+                    background: 'white',
+                    borderRadius: '16px',
+                    padding: '28px',
+                    border: '1px solid #e2e8f0'
+                }}>
+                    <h3 style={{ fontSize: '14px', fontWeight: 700, color: '#1e293b', marginBottom: '20px', fontStyle: 'italic' }}>
+                        Lo que necesitamos de ti
+                    </h3>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                        {MOCK_DATA.acciones.map((accion, i) => (
+                            <div 
+                                key={i}
+                                onClick={() => navigate(`/cliente/diagnostico/${projectId}/${accion.link}`)}
+                                style={{
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'space-between',
+                                    cursor: 'pointer'
+                                }}
+                            >
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                                    <div style={{
+                                        width: '32px',
+                                        height: '32px',
+                                        borderRadius: '8px',
+                                        background: i === 0 ? '#dbeafe' : i === 1 ? '#d1fae5' : '#e0e7ff',
+                                        color: i === 0 ? '#2563eb' : i === 1 ? '#059669' : '#6366f1',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center'
+                                    }}>
+                                        <accion.icon size={16} />
+                                    </div>
+                                    <span style={{ fontSize: '13px', color: '#475569' }}>{accion.text}</span>
+                                </div>
+                                <FiArrowRight size={14} color="#94a3b8" />
                             </div>
                         ))}
                     </div>
-                </div>
-
-                {/* Next Steps / Highlights */}
-                <div className="bg-[var(--primary-700)] p-8 rounded-[2rem] text-white shadow-xl shadow-[var(--primary-700)]/20 relative overflow-hidden flex flex-col justify-between">
-                    <FiTarget size={120} className="absolute -bottom-10 -right-10 text-white/10 rotate-12" />
-                    
-                    <div>
-                        <span className="text-[10px] font-black text-white/60 uppercase tracking-widest mb-4 block">Siguiente Hito</span>
-                        <h3 className="text-2xl font-black mb-4 leading-tight">Implementación de Quick Wins (Fase 1)</h3>
-                        <p className="text-sm text-white/80 leading-relaxed mb-8">
-                            Hemos identificado <strong>{dashboardData.top3Count} iniciativas de alto impacto</strong> que pueden ejecutarse en menos de 90 días con un ROI combinado de {new Intl.NumberFormat('es-ES', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }).format(dashboardData.totalROI * 0.4)}.
-                        </p>
-                    </div>
-
-                    <button className="w-full py-4 bg-white text-[var(--primary-700)] rounded-2xl font-black uppercase tracking-widest text-xs hover:bg-[var(--surface-50)] transition-all shadow-xl">
-                        Ver Plan Detallado
-                    </button>
                 </div>
             </div>
         </div>
     )
 }
+

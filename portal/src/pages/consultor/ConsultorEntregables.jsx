@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, Fragment } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import {
     FiArrowLeft, FiEye, FiCheck,
@@ -117,8 +117,8 @@ export default function ConsultorEntregables() {
                                 </thead>
                                 <tbody>
                                     {deliverableData.map(ent => (
-                                        <>
-                                            <tr key={ent.id}>
+                                        <Fragment key={ent.id}>
+                                            <tr>
                                                 <td>
                                                     <strong>{ent.nombre}</strong>
                                                 </td>
@@ -191,7 +191,7 @@ export default function ConsultorEntregables() {
                                                     </td>
                                                 </tr>
                                             )}
-                                        </>
+                                        </Fragment>
                                     ))}
                                 </tbody>
                             </table>

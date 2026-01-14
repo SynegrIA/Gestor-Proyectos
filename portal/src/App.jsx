@@ -121,23 +121,23 @@ function App() {
 
         {/* Consultoría (antes Diagnóstico) */}
         <Route path="diagnostico/:id">
-          <Route index element={<DiagnosticoDashboard />} />
+          <Route index element={<Navigate to="dashboard" replace />} />
           <Route path="dashboard" element={<DiagnosticoDashboard />} />
           <Route path="pendientes" element={<ClienteTareas />} />
           <Route path="tareas" element={<Navigate to="../pendientes" replace />} />
-          <Route path="medicion-tiempos" element={<DiagnosticoMedicion />} />
-          <Route path="matriz" element={<DiagnosticoMatriz />} />
-          <Route path="roadmap" element={<DiagnosticoRoadmap />} />
-          <Route path="iniciativas" element={<DiagnosticoIniciativas />} />
+          <Route path="medicion-tiempos" element={<Navigate to="../resultados/supuestos" replace />} />
+          <Route path="matriz" element={<Navigate to="../resultados/matriz" replace />} />
+          <Route path="roadmap" element={<Navigate to="../resultados/roadmap" replace />} />
+          <Route path="iniciativas" element={<Navigate to="../resultados/iniciativas" replace />} />
           <Route path="iniciativas/:iniciativaId" element={<DiagnosticoFichaIniciativa />} />
-          <Route path="supuestos-medicion" element={<DiagnosticoSupuestos />} />
+          <Route path="supuestos-medicion" element={<Navigate to="../resultados/supuestos" replace />} />
           <Route path="siguientes-pasos" element={<DiagnosticoSiguientesPasos />} />
           <Route path="revision" element={<DiagnosticoRevision />} />
           <Route path="data-room" element={<DiagnosticoDataRoom />} />
           
           <Route path="resultados" element={<DiagnosticoResultados />}>
             <Route index element={<Navigate to="resumen" replace />} />
-            <Route path="resumen" element={<DiagnosticoDashboard />} />
+            <Route path="resumen" element={<DiagnosticoDashboard hideHeader={true} />} />
             <Route path="matriz" element={<DiagnosticoMatriz />} />
             <Route path="roadmap" element={<DiagnosticoRoadmap />} />
             <Route path="iniciativas" element={<DiagnosticoIniciativas />} />

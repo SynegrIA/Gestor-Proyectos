@@ -3,7 +3,7 @@ import { DELIVERABLE_TYPES } from './deliverables';
 
 export const MOCK_PROJECT_DATA = {
     dashboard: {
-        summary: 'Tras analizar 5 departamentos y 23 procesos, hemos identificado 3 iniciativas prioritarias que pueden generar un ahorro de €45.2K anuales.',
+        summary: 'Tras un análisis exhaustivo de 6 departamentos clave y más de 30 procesos operativos, hemos identificado oportunidades críticas de automatización. El plan propuesto se centra en 3 ejes principales: mejora de la conversión comercial, eficiencia financiera y optimización logística. Estas iniciativas proyectan un ahorro combinado de €117.9K anuales con un ROI promedio del 240% en el primer año.',
         kpis: [
             { label: 'Ahorro anual estimado', value: '€45.2K' },
             { label: 'Mejora eficiencia', value: '23%' },
@@ -12,11 +12,14 @@ export const MOCK_PROJECT_DATA = {
     },
     matriz: {
         processes: [
-            { id: 1, name: 'Elaboración de Presupuestos', pain: 8, time_min: 45 },
-            { id: 2, name: 'Gestión de Pedidos', pain: 5, time_min: 15 },
-            { id: 3, name: 'Facturación Mensual', pain: 9, time_min: 30 },
-            { id: 4, name: 'Gestión de Cobros', pain: 3, time_min: 20 },
-            { id: 5, name: 'Control de Inventario', pain: 6, time_min: 60 }
+            { id: 1, name: 'Elaboración de Presupuestos', dep: 'Ventas', pain: 8, time_min: 45, freq_raw: '50/mes' },
+            { id: 2, name: 'Gestión de Pedidos Manual', dep: 'Ventas', pain: 6, time_min: 20, freq_raw: '120/mes' },
+            { id: 3, name: 'Facturación Recurrente', dep: 'Finanzas', pain: 9, time_min: 30, freq_raw: '85/mes' },
+            { id: 4, name: 'Conciliación Bancaria', dep: 'Finanzas', pain: 7, time_min: 60, freq_raw: 'Diario' },
+            { id: 5, name: 'Control de Inventario', dep: 'Operaciones', pain: 5, time_min: 120, freq_raw: 'Semanal' },
+            { id: 6, name: 'Reporting Comercial Q1', dep: 'Marketing', pain: 4, time_min: 180, freq_raw: 'Mensual' },
+            { id: 7, name: 'Gestión de Incidencias Soporte', dep: 'Sistemas', pain: 8, time_min: 45, freq_raw: '200/mes' },
+            { id: 8, name: 'Cierre Contable Mensual', dep: 'Finanzas', pain: 8, time_min: 480, freq_raw: '1/mes' }
         ]
     },
     roadmap: {
@@ -62,17 +65,17 @@ export const MOCK_PROJECT_DATA = {
             id: 1, 
             orden: 1,
             titulo: 'Seguimiento automático de presupuestos', 
-            resumen: 'Sistema de seguimiento automático para mejorar la conversión de ventas.',
+            resumen: 'Sistema de seguimiento automático para alertas y recordatorios de presupuestos enviados que no han recibido respuesta, mejorando la conversión de ventas.',
             estado_visibilidad: 'PUBLICADA',
             estado_cliente: 'APROBADA',
-            roi_eur_anual: 25000, 
+            roi_eur_anual: 28500, 
             esfuerzo_horas: 35, 
-            payback_meses: 2, 
+            payback_meses: 1.5, 
             confianza: 'ALTA',
             area: 'Ventas',
-            comentarios_count: 3,
-            adjuntos_count: 1,
-            supuestos_clave: 'Asume integración con CRM vía API estable.',
+            comentarios_count: 5,
+            adjuntos_count: 2,
+            supuestos_clave: 'Asume integración con CRM vía API estable y tasa de apertura de emails del 40%.',
             isTop: true,
             start_date: '2026-02-01',
             end_date: '2026-03-15'
@@ -81,17 +84,17 @@ export const MOCK_PROJECT_DATA = {
             id: 2, 
             orden: 2,
             titulo: 'Dashboard de Control de Fugas', 
-            resumen: 'Panel de control para identificar y reducir pérdidas financieras.',
+            resumen: 'Panel de control inteligente para identificar y reducir pérdidas financieras por discrepancias entre albaranes y facturas de proveedores.',
             estado_visibilidad: 'PUBLICADA',
             estado_cliente: 'POSPUESTA',
-            roi_eur_anual: 15000, 
+            roi_eur_anual: 18200, 
             esfuerzo_horas: 25, 
-            payback_meses: 1.8, 
+            payback_meses: 2.1, 
             confianza: 'MEDIA',
             area: 'Finanzas',
-            comentarios_count: 0,
-            adjuntos_count: 0,
-            supuestos_clave: 'Requiere acceso a logs de transacciones históricas.',
+            comentarios_count: 2,
+            adjuntos_count: 1,
+            supuestos_clave: 'Requiere acceso a logs de transacciones históricas detalladas del ERP.',
             isTop: true,
             start_date: '2026-03-20',
             end_date: '2026-05-10'
@@ -100,39 +103,77 @@ export const MOCK_PROJECT_DATA = {
             id: 3, 
             orden: 3,
             titulo: 'Limpieza de Datos CRM', 
-            resumen: 'Depuración y normalización de la base de datos de clientes.',
+            resumen: 'Depuración y normalización de la base de datos de clientes para eliminar duplicados y corregir errores de segmentación.',
             estado_visibilidad: 'PUBLICADA',
             estado_cliente: 'DESCARTADA',
-            roi_eur_anual: 8200, 
+            roi_eur_anual: 9100, 
             esfuerzo_horas: 60, 
             payback_meses: 8, 
             confianza: 'MEDIA',
             area: 'Sistemas',
-            comentarios_count: 5,
-            adjuntos_count: 2,
-            supuestos_clave: 'Reducción de duplicados estimada en 20%.',
-            isTop: true,
+            comentarios_count: 8,
+            adjuntos_count: 3,
+            supuestos_clave: 'Reducción de duplicados estimada en un 20% tras análisis inicial.',
+            isTop: false,
             start_date: '2026-01-15',
             end_date: '2026-04-30'
         },
         { 
             id: 4, 
             orden: 4,
-            titulo: 'Optimización de Ruta Logística', 
-            resumen: 'Mejora de rutas de entrega para reducir costes de combustible.',
-            estado_visibilidad: 'BORRADOR',
+            titulo: 'Optimización de Ruta Logística con IA', 
+            resumen: 'Implementación de algoritmos de optimización de rutas para reducir el gasto de combustible y mejorar los tiempos de entrega de última milla.',
+            estado_visibilidad: 'PUBLICADA',
             estado_cliente: 'PENDIENTE',
-            roi_eur_anual: 12000, 
-            esfuerzo_horas: 45, 
-            payback_meses: 4.5, 
+            roi_eur_anual: 35400, 
+            esfuerzo_horas: 85, 
+            payback_meses: 4.2, 
             confianza: 'ALTA',
             area: 'Operaciones',
-            comentarios_count: 0,
+            comentarios_count: 4,
+            adjuntos_count: 5,
+            supuestos_clave: 'Basado en ahorro de combustible del 8% y reducción de kilómetros del 12%.',
+            isTop: true,
+            start_date: '2026-04-01',
+            end_date: '2026-06-30'
+        },
+        { 
+            id: 5, 
+            orden: 5,
+            titulo: 'Asistente de Consultas FAQ para Clientes', 
+            resumen: 'Agente de IA generativa para resolver dudas comunes de clientes en tiempo real dentro del portal web.',
+            estado_visibilidad: 'PUBLICADA',
+            estado_cliente: 'PENDIENTE',
+            roi_eur_anual: 12500, 
+            esfuerzo_horas: 40, 
+            payback_meses: 3.8, 
+            confianza: 'MEDIA',
+            area: 'Ventas',
+            comentarios_count: 1,
             adjuntos_count: 0,
-            supuestos_clave: 'Ahorro de combustible del 5%.',
+            supuestos_clave: 'Reducción del 30% en tickets de soporte simples.',
             isTop: false,
-            start_date: '2026-06-01',
-            end_date: '2026-07-15'
+            start_date: '2026-05-15',
+            end_date: '2026-07-20'
+        },
+        { 
+            id: 6, 
+            orden: 6,
+            titulo: 'Automatización de Facturación Mensual', 
+            resumen: 'Robotización del proceso de emisión y envío de facturas recurrentes a clientes.',
+            estado_visibilidad: 'PUBLICADA',
+            estado_cliente: 'APROBADA',
+            roi_eur_anual: 14200, 
+            esfuerzo_horas: 30, 
+            payback_meses: 1.2, 
+            confianza: 'ALTA',
+            area: 'Finanzas',
+            comentarios_count: 7,
+            adjuntos_count: 2,
+            supuestos_clave: 'Eliminación completa del error humano en cargos recurrentes.',
+            isTop: true,
+            start_date: '2026-03-01',
+            end_date: '2026-04-15'
         }
     ],
     siguientesPasos: {
@@ -145,60 +186,71 @@ export const MOCK_PROJECT_DATA = {
     supuestos: [
         { 
             id: 1, 
-            texto: 'Volumen de facturación: 150 facturas/mes', 
+            texto: 'Volumen de facturación mensual: 185 facturas/mes promedio', 
             estado: 'VALIDADO', 
             impacto: 'ALTO', 
-            fuente: 'ERP', 
-            evidencia: { type: 'file', name: 'export_facturacion_2023.csv', fileId: 'f1' },
-            afectaIniciativas: [1, 2], // IDs de iniciativas
+            fuente: 'ERP - Exportación Ventas 2023', 
+            evidencia: { type: 'file', name: 'analisis_volumen_v1.pdf', fileId: 'f1' },
+            afectaIniciativas: [1, 2, 6],
             comentarios: [
-                { id: 1, author: 'Consultor', text: 'Validado con datos del ERP.', date: '2026-01-10T10:00:00Z', avatar: '👨‍💼' }
+                { id: 1, author: 'Consultor', text: 'Confirmado con los reportes del ERP de los últimos 6 meses.', date: '2026-01-10T10:00:00Z', avatar: '👨‍💼' }
             ]
         },
         { 
             id: 2, 
-            texto: 'Tiempo promedio por factura manual: 30 minutos', 
+            texto: 'Tiempo promedio por conciliación manual: 12 min/factura', 
             estado: 'VALIDADO', 
             impacto: 'ALTO', 
-            fuente: 'Entrevistas', 
-            evidencia: { type: 'text', name: 'Entrevista: Responsable Facturación' },
-            afectaIniciativas: [1],
+            fuente: 'Observación Directa y Toma de Tiempos', 
+            evidencia: { type: 'text', name: 'Muestreo realizado el 12/01/2026' },
+            afectaIniciativas: [6],
             comentarios: []
         },
         { 
             id: 3, 
-            texto: 'Coste hora empleado base: €25/h', 
-            estado: 'ESTIMADO', 
+            texto: 'Coste hora laboral bruta (promedio): €28/h', 
+            estado: 'VALIDADO', 
             impacto: 'ALTO', 
-            fuente: 'RRHH', 
+            fuente: 'Departamento de RRHH', 
             evidencia: null,
-            afectaIniciativas: [1, 2, 3],
+            afectaIniciativas: [1, 2, 3, 4, 5, 6],
             comentarios: [
-                { id: 2, author: 'Cliente', text: 'Revisar con datos actualizados de nóminas.', date: '2026-01-12T14:30:00Z', avatar: '👤' }
+                { id: 2, author: 'Cliente', text: 'Validado con el departamento financiero.', date: '2026-01-12T14:30:00Z', avatar: '👤' }
             ]
         },
         { 
             id: 4, 
-            texto: 'ERP permite integraciones API REST', 
-            estado: 'REVISION', 
+            texto: 'Disponibilidad de API REST en sistema central', 
+            estado: 'VALIDADO', 
             impacto: 'ALTO', 
-            fuente: 'IT', 
+            fuente: 'Documentación Técnica Proveedor IT', 
             evidencia: null,
-            afectaIniciativas: [1],
+            afectaIniciativas: [1, 2],
             comentarios: [
-                { id: 3, author: 'Cliente', text: 'Pendiente confirmar con proveedor del ERP.', date: '2026-01-13T09:00:00Z', avatar: '👤' },
-                { id: 4, author: 'Consultor', text: 'Agendada reunión técnica para el 20/01.', date: '2026-01-13T11:00:00Z', avatar: '👨‍💼' }
+                { id: 3, author: 'Consultor', text: 'API accesible y documentada. Permite operaciones CRUD.', date: '2026-01-13T09:00:00Z', avatar: '👨‍💼' }
             ]
         },
         { 
             id: 5, 
-            texto: 'Reducción de errores manuales estimada: 40%', 
+            texto: 'Reducción estimada de incidencias post-automatización: 35%', 
             estado: 'ESTIMADO', 
             impacto: 'MEDIO', 
-            fuente: 'Entrevistas', 
+            fuente: 'Benchmarks del Sector', 
             evidencia: null,
-            afectaIniciativas: [2],
+            afectaIniciativas: [2, 6],
             comentarios: []
+        },
+        { 
+            id: 6, 
+            texto: 'Tasa de conversión actual de presupuestos: 18%', 
+            estado: 'REVISION', 
+            impacto: 'ALTO', 
+            fuente: 'CRM Ventas', 
+            evidencia: null,
+            afectaIniciativas: [1],
+            comentarios: [
+                { id: 4, author: 'Consultor', text: 'Pendiente de cruzar con datos de facturación real.', date: '2026-01-14T11:00:00Z', avatar: '👨‍💼' }
+            ]
         }
     ],
 

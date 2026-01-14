@@ -1,5 +1,5 @@
 import { Outlet, NavLink, useLocation, useParams } from 'react-router-dom'
-import { useAuth } from '../context/AuthContext'
+import { useAuth, ROLES } from '../context/AuthContext'
 import {
     FiPieChart, FiUsers, FiBook, FiList, FiSettings,
     FiBell, FiActivity, FiCheckSquare, FiFileText, FiFolder,
@@ -18,15 +18,15 @@ const NAV_ITEMS_GLOBAL = [
 const NAV_ITEMS_BIBLIOTECA = [
     { to: '/consultor/catalogo', icon: FiBook, label: 'Catálogo de Soluciones' },
     { to: '/consultor/activos', icon: FiBook, label: 'Activos Reutilizables' },
-    { to: '/consultor/plantilla-tareas', icon: FiList, label: 'Plantilla Tareas' }
+    { to: '/consultor/plantilla-tareas', icon: FiList, label: 'Plantilla Tareas', adminOnly: true }
 ]
 
 const NAV_ITEMS_ADMIN = [
-    { to: '/consultor/admin', icon: FiShield, label: 'Administración' }
+    { to: '/consultor/admin', icon: FiShield, label: 'Administración', adminOnly: true }
 ]
 
 export default function ConsultorLayout() {
-    const { user } = useAuth()
+    const { user, isAdmin } = useAuth()
     const location = useLocation()
 
     const [expandedGroups, setExpandedGroups] = useState(() => {
@@ -76,7 +76,7 @@ export default function ConsultorLayout() {
                     {/* Biblioteca */}
                     <div className="sidebar__section">
                         <div className="sidebar__section-title">Biblioteca</div>
-                        {NAV_ITEMS_BIBLIOTECA.map(item => (
+                        {NAV_ITEMS_BIBLIOTECA.filter(item => !item.adminOnly).map(item => (
                             <NavLink
                                 key={item.to}
                                 to={item.to}
@@ -227,7 +227,7 @@ export default function ConsultorLayout() {
                     {/* Admin */}
                     <div className="sidebar__section">
                         <div className="sidebar__section-title">Sistema</div>
-                        {NAV_ITEMS_ADMIN.map(item => (
+                        {NAV_ITEMS_ADMIN.filter(item => !item.adminOnly).map(item => (
                             <NavLink
                                 key={item.to}
                                 to={item.to}

@@ -7,7 +7,7 @@ import {
 } from 'react-icons/fi';
 import { useNavigate } from 'react-router-dom';
 import SOLUTIONS_CATALOG_DATA from '../../data/catalogo_soluciones_v1.json';
-import { getAssetLinks, getAssetsForSolution } from '../../utils/assetLinksHelper';
+import { getAssetLinks, getAssetsForSolution, updateSolutionLinks } from '../../utils/assetLinksHelper';
 import { ASSETS_CATALOG } from '../../data/assetsCatalog';
 import './ConsultorCatalogo.css';
 
@@ -16,7 +16,9 @@ const ConsultorCatalogo = ({ isAdminView }) => {
     // Local state for catalog to support additions
     const [catalog, setCatalog] = useState(() => {
         const saved = localStorage.getItem('solutions_catalog_v1_custom');
-        return saved ? [...JSON.parse(saved), ...SOLUTIONS_CATALOG_DATA] : SOLUTIONS_CATALOG_DATA;
+        const custom = saved ? JSON.parse(saved) : [];
+        const customIds = new Set(custom.map(s => s.id));
+        return [...custom, ...SOLUTIONS_CATALOG_DATA.filter(s => !customIds.has(s.id))];
     });
 
     const [searchQuery, setSearchQuery] = useState('');
@@ -28,6 +30,8 @@ const ConsultorCatalogo = ({ isAdminView }) => {
     
     // Admin States
     const [showCreateModal, setShowCreateModal] = useState(false);
+    const [showEditModal, setShowEditModal] = useState(false);
+    const [editingSolution, setEditingSolution] = useState(null);
     const [showImportModal, setShowImportModal] = useState(false);
     const [importStep, setImportStep] = useState('upload'); // upload, preview, processing, done
     const [importedData, setImportedData] = useState([]);
@@ -85,7 +89,7 @@ const ConsultorCatalogo = ({ isAdminView }) => {
         });
     }, [searchQuery, filters, catalog]);
     
-    const handleAddSolution = (newSol) => {
+    const handleAddSolution = (newSol, linkedAssetIds) => {
         // En una app real, esto iría al backend. Aquí guardamos en localStorage.
         const customSolutions = JSON.parse(localStorage.getItem('solutions_catalog_v1_custom') || '[]');
         const solutionWithId = { ...newSol, id: `custom-${Date.now()}`, estado: 'Activo' };
@@ -93,8 +97,48 @@ const ConsultorCatalogo = ({ isAdminView }) => {
         customSolutions.push(solutionWithId);
         localStorage.setItem('solutions_catalog_v1_custom', JSON.stringify(customSolutions));
         
-        setCatalog(prev => [...prev, solutionWithId]);
+        setCatalog(prev => [solutionWithId, ...prev]);
+
+        // Asset Links
+        if (linkedAssetIds && linkedAssetIds.length > 0) {
+            const newLinks = updateSolutionLinks(solutionWithId.id, linkedAssetIds);
+            setAssetLinks(newLinks);
+        }
+
         setShowCreateModal(false);
+    };
+
+    const handleEditSolution = (sol) => {
+        setEditingSolution(sol);
+        setShowEditModal(true);
+    };
+
+    const handleUpdateSolution = (updatedSol, linkedAssetIds) => {
+        // 1. Update Catalog
+        const customSolutions = JSON.parse(localStorage.getItem('solutions_catalog_v1_custom') || '[]');
+        const existingIdx = customSolutions.findIndex(s => s.id === updatedSol.id);
+        
+        let newCustom;
+        if (existingIdx >= 0) {
+            newCustom = customSolutions.map((s, i) => i === existingIdx ? updatedSol : s);
+        } else {
+            newCustom = [...customSolutions, updatedSol];
+        }
+        
+        localStorage.setItem('solutions_catalog_v1_custom', JSON.stringify(newCustom));
+        
+        // Update state
+        setCatalog(prev => prev.map(s => s.id === updatedSol.id ? updatedSol : s));
+        setSelectedSolution(updatedSol);
+
+        // 2. Update Asset Links
+        if (linkedAssetIds) {
+            const newLinks = updateSolutionLinks(updatedSol.id, linkedAssetIds);
+            setAssetLinks(newLinks);
+        }
+        
+        setShowEditModal(false);
+        setEditingSolution(null);
     };
 
     const handleImportFile = (e) => {
@@ -168,7 +212,7 @@ const ConsultorCatalogo = ({ isAdminView }) => {
         });
     };
 
-    const handleGenerateImage = (id, sol) => {
+    const handleGenerateImage = (id) => {
         setSolutionImages(prev => ({
             ...prev,
             [id]: { status: 'generating' }
@@ -370,7 +414,7 @@ Requisitos: ${sol.requisitos.slice(0, 3).join(', ')}`;
                                 key={sol.id} 
                                 sol={sol} 
                                 imageData={solutionImages[sol.id]}
-                                onGenerateImage={() => handleGenerateImage(sol.id, sol)}
+                                onGenerateImage={() => handleGenerateImage(sol.id)}
                                 onClick={() => setSelectedSolution(sol)}
                             />
                         ))}
@@ -430,7 +474,18 @@ Requisitos: ${sol.requisitos.slice(0, 3).join(', ')}`;
                     <div className="solution-drawer" onClick={e => e.stopPropagation()}>
                         <header className="drawer-header">
                             <div className="title-group">
-                                <span className="id-tag">{selectedSolution.id}</span>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                    <span className="id-tag">{selectedSolution.id}</span>
+                                    {isAdminView && (
+                                        <button 
+                                            className="btn btn--xs btn--secondary" 
+                                            onClick={() => handleEditSolution(selectedSolution)}
+                                            style={{ padding: '2px 8px', fontSize: '11px' }}
+                                        >
+                                            Editar Ficha
+                                        </button>
+                                    )}
+                                </div>
                                 <h2>{selectedSolution.nombre}</h2>
                             </div>
                             <button className="btn-close" onClick={() => setSelectedSolution(null)}><FiX /></button>
@@ -569,14 +624,21 @@ Requisitos: ${sol.requisitos.slice(0, 3).join(', ')}`;
                 </div>
             )}
 
-            {/* Create Modal */}
-            {showCreateModal && (
-                <CreateSolutionModal 
-                    onSave={handleAddSolution} 
-                    onClose={() => setShowCreateModal(false)}
+            {/* Create/Edit Modal */}
+            {(showCreateModal || showEditModal) && (
+                <SolutionFormModal 
+                    onSave={showCreateModal ? handleAddSolution : handleUpdateSolution} 
+                    onClose={() => {
+                        setShowCreateModal(false);
+                        setShowEditModal(false);
+                        setEditingSolution(null);
+                    }}
                     sectors={sectors}
                     departments={departments}
                     types={solutionTypes}
+                    initialData={editingSolution}
+                    allAssets={ASSETS_CATALOG}
+                    currentAssetIds={editingSolution ? getAssetsForSolution(editingSolution.id, assetLinks, ASSETS_CATALOG) : []}
                 />
             )}
 
@@ -671,124 +733,380 @@ Requisitos: ${sol.requisitos.slice(0, 3).join(', ')}`;
     );
 };
 
-// ... (SolutionCard existing component) ...
-
-function CreateSolutionModal({ onSave, onClose, sectors, departments, types }) {
+function SolutionFormModal({ onSave, onClose, sectors, departments, types, initialData, allAssets, currentAssetIds }) {
     const [formData, setFormData] = useState({
-        nombre: '',
-        problema: '',
-        outcome: '',
-        tipoSolucion: '',
-        sector: '',
-        departamento: '',
-        complejidad: 3,
-        ttv: '2 semanas',
-        precio_setup: 0
+        nombre: initialData?.nombre || '',
+        problema: initialData?.problema || '',
+        outcome: initialData?.outcome || '',
+        descripcion: initialData?.descripcion || '',
+        tipoSolucion: initialData?.tipoSolucion?.[0] || '',
+        sector: initialData?.sector?.[0] || '',
+        departamento: initialData?.departamento?.[0] || '',
+        complejidad: initialData?.complejidad || 3,
+        ttv: initialData?.ttv || '2 semanas',
+        precio_setup: initialData?.precio_setup || 0,
+        id: initialData?.id || null,
+        estado: initialData?.estado || 'Activo'
     });
+
+    const [selectedAssets, setSelectedAssets] = useState(currentAssetIds.map(id => id.toString()));
+    const [assetSearch, setAssetSearch] = useState('');
+
+    const filteredAssets = allAssets.filter(asset => 
+        asset.nombre.toLowerCase().includes(assetSearch.toLowerCase()) ||
+        asset.tipo.toLowerCase().includes(assetSearch.toLowerCase()) ||
+        (asset.fase && asset.fase.toLowerCase().includes(assetSearch.toLowerCase()))
+    );
 
     const handleSubmit = (e) => {
         e.preventDefault();
         onSave({
+            ...initialData,
             ...formData,
-            tipoSolucion: [formData.tipoSolucion], // Adapt format
+            tipoSolucion: [formData.tipoSolucion], 
             sector: [formData.sector],
             departamento: [formData.departamento],
-            entregables: [],
-            requisitos: [],
-            riesgos: []
-        });
+        }, selectedAssets);
+    };
+
+    const toggleAsset = (assetId) => {
+        const idStr = assetId.toString();
+        setSelectedAssets(prev => 
+            prev.includes(idStr) 
+                ? prev.filter(id => id !== idStr)
+                : [...prev, idStr]
+        );
+    };
+
+    const inputGroupStyle = {
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '6px',
+        marginBottom: '16px'
+    };
+
+    const labelStyle = {
+        fontSize: '13px',
+        fontWeight: '600',
+        color: 'var(--text-secondary)',
+    };
+
+    const inputStyle = {
+        width: '100%',
+        padding: '10px 12px',
+        borderRadius: 'var(--radius-md)',
+        border: '1px solid var(--border-color)',
+        fontSize: '14px',
+        background: 'white',
+        outline: 'none',
+        transition: 'border-color 0.2s',
     };
 
     return (
         <div className="modal-overlay" style={{
-            position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', zIndex: 1000, 
-            display: 'flex', alignItems: 'center', justifyContent: 'center'
+            position: 'fixed', inset: 0, background: 'rgba(15, 23, 42, 0.75)', zIndex: 1000, 
+            display: 'flex', alignItems: 'center', justifyContent: 'center', backdropFilter: 'blur(4px)'
         }}>
-            <div className="card" style={{ width: '600px', maxWidth: '90vw', maxHeight: '90vh', overflowY: 'auto' }}>
-                <div className="card-header">
-                    <h3 className="card-title">Nueva Solución</h3>
-                    <button className="btn btn--ghost btn--icon" onClick={onClose}><FiX /></button>
+            <div className="card" style={{ 
+                width: '900px', 
+                maxWidth: '95vw', 
+                maxHeight: '90vh', 
+                overflow: 'hidden', 
+                display: 'flex', 
+                flexDirection: 'column',
+                boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
+                border: 'none'
+            }}>
+                <div className="card-header" style={{ 
+                    padding: '20px 24px', 
+                    borderBottom: '1px solid var(--border-color)',
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center'
+                }}>
+                    <div>
+                        <h3 className="card-title" style={{ margin: 0, fontSize: '18px', fontWeight: '700' }}>
+                            {initialData ? 'Editar Solución' : 'Nueva Solución del Catálogo'}
+                        </h3>
+                        {initialData && <span style={{ fontSize: '12px', color: 'var(--text-tertiary)' }}>ID: {initialData.id}</span>}
+                    </div>
+                    <button className="btn btn--ghost btn--icon" onClick={onClose} style={{ borderRadius: '50%' }}><FiX /></button>
                 </div>
-                <form onSubmit={handleSubmit}>
-                    <div className="card-body" style={{ display: 'grid', gap: 'var(--space-4)' }}>
-                        <div>
-                            <label className="label">Nombre de la solución *</label>
-                            <input type="text" className="input" required 
-                                value={formData.nombre} onChange={e => setFormData({...formData, nombre: e.target.value})} 
-                            />
-                        </div>
-                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--space-4)' }}>
-                            <div>
-                                <label className="label">Tipo</label>
-                                <input type="text" list="types-list" className="input" required
-                                    value={formData.tipoSolucion} onChange={e => setFormData({...formData, tipoSolucion: e.target.value})}
-                                />
-                                <datalist id="types-list">{types.map(t => <option key={t} value={t} />)}</datalist>
+                
+                <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', flex: 1, overflow: 'hidden' }}>
+                    <div className="card-body" style={{ 
+                        overflowY: 'auto', 
+                        padding: '24px',
+                        background: '#f8fafc' // Subtle gray background for body
+                    }}>
+                        <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 0.8fr', gap: '32px' }}>
+                            
+                            {/* Columna Izquierda: Información de la Solución */}
+                            <div style={{ display: 'flex', flexDirection: 'column' }}>
+                                <div style={{ background: 'white', padding: '20px', borderRadius: 'var(--radius-lg)', border: '1px solid var(--border-color)', boxShadow: 'var(--shadow-sm)' }}>
+                                    <h4 style={{ marginTop: 0, marginBottom: '20px', fontSize: '14px', color: 'var(--primary-600)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Información Principal</h4>
+                                    
+                                    <div style={inputGroupStyle}>
+                                        <label style={labelStyle}>Nombre de la solución *</label>
+                                        <input type="text" style={inputStyle} required 
+                                            value={formData.nombre} onChange={e => setFormData({...formData, nombre: e.target.value})} 
+                                            placeholder="Ej. Automatización de Facturación"
+                                        />
+                                    </div>
+
+                                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+                                        <div style={inputGroupStyle}>
+                                            <label style={labelStyle}>Categoría / Tipo</label>
+                                            <input type="text" list="types-list" style={inputStyle} required
+                                                value={formData.tipoSolucion} onChange={e => setFormData({...formData, tipoSolucion: e.target.value})}
+                                                placeholder="Ej. SaaS"
+                                            />
+                                            <datalist id="types-list">{types.map(t => <option key={t} value={t} />)}</datalist>
+                                        </div>
+                                        <div style={inputGroupStyle}>
+                                            <label style={labelStyle}>Estado en Catálogo</label>
+                                            <select style={inputStyle} value={formData.estado} onChange={e => setFormData({...formData, estado: e.target.value})}>
+                                                <option value="Activo">🟢 Activo</option>
+                                                <option value="Borrador">🟡 Borrador</option>
+                                                <option value="Deprecado">🔴 Deprecado</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div style={inputGroupStyle}>
+                                        <label style={labelStyle}>Descripción Corta</label>
+                                        <textarea style={{...inputStyle, minHeight: '80px', resize: 'vertical'}} 
+                                            value={formData.descripcion} onChange={e => setFormData({...formData, descripcion: e.target.value})}
+                                            placeholder="Explica brevemente qué hace la solución..."
+                                        />
+                                    </div>
+
+                                    <div style={inputGroupStyle}>
+                                        <label style={labelStyle}>Problema que resuelve *</label>
+                                        <textarea style={{...inputStyle, minHeight: '60px', resize: 'vertical'}} required
+                                            value={formData.problema} onChange={e => setFormData({...formData, problema: e.target.value})}
+                                            placeholder="¿Qué dolor alivia al cliente?"
+                                        />
+                                    </div>
+
+                                    <div style={inputGroupStyle}>
+                                        <label style={labelStyle}>Outcome / Promesa *</label>
+                                        <textarea style={{...inputStyle, minHeight: '60px', resize: 'vertical'}} required
+                                            value={formData.outcome} onChange={e => setFormData({...formData, outcome: e.target.value})}
+                                            placeholder="¿Qué resultado tangible obtendrá el cliente?"
+                                        />
+                                    </div>
+
+                                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+                                        <div style={inputGroupStyle}>
+                                            <label style={labelStyle}>Sector Recomendado</label>
+                                            <input type="text" list="sector-list" style={inputStyle} required
+                                                value={formData.sector} onChange={e => setFormData({...formData, sector: e.target.value})}
+                                            />
+                                            <datalist id="sector-list">{sectors.map(s => <option key={s} value={s} />)}</datalist>
+                                        </div>
+                                        <div style={inputGroupStyle}>
+                                            <label style={labelStyle}>Departamento</label>
+                                            <input type="text" list="dept-list" style={inputStyle} required
+                                                value={formData.departamento} onChange={e => setFormData({...formData, departamento: e.target.value})}
+                                            />
+                                            <datalist id="dept-list">{departments.map(d => <option key={d} value={d} />)}</datalist>
+                                        </div>
+                                    </div>
+
+                                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+                                        <div style={inputGroupStyle}>
+                                            <label style={labelStyle}>Complejidad de Impl. (1-5)</label>
+                                            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '4px 0' }}>
+                                                <input type="range" min="1" max="5" style={{ flex: 1, accentColor: 'var(--primary-500)' }}
+                                                    value={formData.complejidad} onChange={e => setFormData({...formData, complejidad: Number(e.target.value)})}
+                                                />
+                                                <span style={{ fontWeight: '700', color: 'var(--primary-600)', minWidth: '20px' }}>{formData.complejidad}</span>
+                                            </div>
+                                        </div>
+                                        <div style={inputGroupStyle}>
+                                            <label style={labelStyle}>TTV (Tiempo hasta valor)</label>
+                                            <input type="text" style={inputStyle} placeholder="ej. 2-4 semanas"
+                                                value={formData.ttv} onChange={e => setFormData({...formData, ttv: e.target.value})}
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-                            <div>
-                                <label className="label">Precio Setup Est.</label>
-                                <input type="number" className="input" 
-                                    value={formData.precio_setup} onChange={e => setFormData({...formData, precio_setup: Number(e.target.value)})}
-                                />
-                            </div>
-                        </div>
-                        <div>
-                            <label className="label">Problema que resuelve</label>
-                            <textarea className="input" rows="2" required
-                                value={formData.problema} onChange={e => setFormData({...formData, problema: e.target.value})}
-                            />
-                        </div>
-                        <div>
-                            <label className="label">Outcome (Promesa de valor)</label>
-                            <textarea className="input" rows="2" required
-                                value={formData.outcome} onChange={e => setFormData({...formData, outcome: e.target.value})}
-                            />
-                        </div>
-                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--space-4)' }}>
-                            <div>
-                                <label className="label">Sector</label>
-                                <input type="text" list="sector-list" className="input" required
-                                    value={formData.sector} onChange={e => setFormData({...formData, sector: e.target.value})}
-                                />
-                                <datalist id="sector-list">{sectors.map(s => <option key={s} value={s} />)}</datalist>
-                            </div>
-                            <div>
-                                <label className="label">Departamento</label>
-                                <input type="text" list="dept-list" className="input" required
-                                    value={formData.departamento} onChange={e => setFormData({...formData, departamento: e.target.value})}
-                                />
-                                <datalist id="dept-list">{departments.map(d => <option key={d} value={d} />)}</datalist>
-                            </div>
-                        </div>
-                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--space-4)' }}>
-                            <div>
-                                <label className="label">Complejidad (1-5)</label>
-                                <input type="range" min="1" max="5" className="input" 
-                                    value={formData.complejidad} onChange={e => setFormData({...formData, complejidad: Number(e.target.value)})}
-                                />
-                                <div style={{ textAlign: 'center', fontWeight: 'bold' }}>{formData.complejidad}</div>
-                            </div>
-                            <div>
-                                <label className="label">TTV (Tiempo hasta valor)</label>
-                                <input type="text" className="input" placeholder="ej. 2 semanas"
-                                    value={formData.ttv} onChange={e => setFormData({...formData, ttv: e.target.value})}
-                                />
+
+                            {/* Columna Derecha: Selección de Activos */}
+                            <div style={{ display: 'flex', flexDirection: 'column' }}>
+                                <div style={{ 
+                                    background: 'white', 
+                                    padding: '20px', 
+                                    borderRadius: 'var(--radius-lg)', 
+                                    border: '1px solid var(--border-color)', 
+                                    boxShadow: 'var(--shadow-sm)',
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    height: '100%'
+                                }}>
+                                    <h4 style={{ marginTop: 0, marginBottom: '8px', fontSize: '14px', color: 'var(--primary-600)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                                        Activos Vinculados
+                                    </h4>
+                                    <p style={{ fontSize: '12px', color: 'var(--text-tertiary)', marginBottom: '16px' }}>
+                                        Selecciona los documentos, plantillas y herramientas necesarios para esta solución.
+                                    </p>
+                                    
+                                    {/* Buscador de Activos */}
+                                    <div style={{ position: 'relative', marginBottom: '12px' }}>
+                                        <FiSearch style={{ 
+                                            position: 'absolute', 
+                                            left: '12px', 
+                                            top: '50%', 
+                                            transform: 'translateY(-50%)', 
+                                            color: 'var(--text-tertiary)',
+                                            pointerEvents: 'none'
+                                        }} size={14} />
+                                        <input 
+                                            type="text" 
+                                            placeholder="Buscar por nombre, tipo o fase..." 
+                                            value={assetSearch}
+                                            onChange={e => setAssetSearch(e.target.value)}
+                                            style={{
+                                                width: '100%',
+                                                padding: '8px 12px 8px 34px',
+                                                borderRadius: 'var(--radius-md)',
+                                                border: '1px solid var(--border-color)',
+                                                fontSize: '13px',
+                                                outline: 'none',
+                                                background: '#f8fafc',
+                                                transition: 'all 0.2s'
+                                            }}
+                                            onFocus={e => {
+                                                e.target.style.borderColor = 'var(--primary-500)';
+                                                e.target.style.background = 'white';
+                                                e.target.style.boxShadow = '0 0 0 3px var(--primary-50)';
+                                            }}
+                                            onBlur={e => {
+                                                e.target.style.borderColor = 'var(--border-color)';
+                                                e.target.style.background = '#f8fafc';
+                                                e.target.style.boxShadow = 'none';
+                                            }}
+                                        />
+                                        {assetSearch && (
+                                            <button 
+                                                type="button"
+                                                onClick={() => setAssetSearch('')}
+                                                style={{
+                                                    position: 'absolute',
+                                                    right: '8px',
+                                                    top: '50%',
+                                                    transform: 'translateY(-50%)',
+                                                    border: 'none',
+                                                    background: 'transparent',
+                                                    color: 'var(--text-tertiary)',
+                                                    cursor: 'pointer',
+                                                    padding: '4px'
+                                                }}
+                                            >
+                                                <FiX size={14} />
+                                            </button>
+                                        )}
+                                    </div>
+                                    
+                                    <div style={{ 
+                                        flex: 1,
+                                        overflowY: 'auto', 
+                                        borderRadius: 'var(--radius-md)',
+                                        border: '1px solid #e2e8f0',
+                                        background: '#f1f5f9'
+                                    }}>
+                                        {filteredAssets.length > 0 ? (
+                                            filteredAssets.map(asset => {
+                                                const isSelected = selectedAssets.includes(asset.id.toString());
+                                                return (
+                                                    <div 
+                                                        key={asset.id} 
+                                                        onClick={() => toggleAsset(asset.id)}
+                                                        style={{
+                                                            display: 'flex',
+                                                            alignItems: 'center',
+                                                            gap: '12px',
+                                                            padding: '12px',
+                                                            borderBottom: '1px solid #e2e8f0',
+                                                            cursor: 'pointer',
+                                                            background: isSelected ? 'white' : 'transparent',
+                                                            transition: 'all 0.1s ease',
+                                                            position: 'relative'
+                                                        }}
+                                                    >
+                                                        {isSelected && <div style={{ position: 'absolute', left: 0, top: 0, bottom: 0, width: '4px', background: 'var(--primary-500)' }} />}
+                                                        <div style={{
+                                                            width: '20px',
+                                                            height: '20px',
+                                                            borderRadius: '4px',
+                                                            border: isSelected ? '2px solid var(--primary-500)' : '2px solid #cbd5e1',
+                                                            display: 'flex',
+                                                            alignItems: 'center',
+                                                            justifyContent: 'center',
+                                                            background: isSelected ? 'var(--primary-500)' : 'white'
+                                                        }}>
+                                                            {isSelected && <FiCheck size={14} color="white" />}
+                                                        </div>
+                                                        <div style={{ flex: 1 }}>
+                                                            <div style={{ fontSize: '13px', fontWeight: isSelected ? '700' : '500', color: isSelected ? 'var(--text-primary)' : 'var(--text-secondary)' }}>
+                                                                {asset.nombre}
+                                                            </div>
+                                                            <div style={{ fontSize: '11px', color: 'var(--text-tertiary)' }}>
+                                                                {asset.tipo} • {asset.fase}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                );
+                                            })
+                                        ) : (
+                                            <div style={{ padding: '32px 16px', textAlign: 'center', color: 'var(--text-tertiary)' }}>
+                                                <div style={{ marginBottom: '8px' }}><FiSearch size={24} style={{ opacity: 0.5 }} /></div>
+                                                <p style={{ fontSize: '13px' }}>No se encontraron activos que coincidan con tu búsqueda.</p>
+                                            </div>
+                                        )}
+                                    </div>
+                                    
+                                    <div style={{ 
+                                        marginTop: '16px', 
+                                        padding: '12px', 
+                                        background: 'var(--primary-50)', 
+                                        borderRadius: 'var(--radius-md)',
+                                        border: '1px solid var(--primary-100)',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        gap: '8px'
+                                    }}>
+                                        <FiLink size={14} className="text-primary" />
+                                        <span style={{ fontSize: '13px', fontWeight: '600', color: 'var(--primary-700)' }}>
+                                            {selectedAssets.length} activos seleccionados
+                                        </span>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
-                    <div className="card-footer" style={{ display: 'flex', justifyContent: 'flex-end', gap: 'var(--space-2)' }}>
-                        <button type="button" className="btn btn--ghost" onClick={onClose}>Cancelar</button>
-                        <button type="submit" className="btn btn--primary"><FiSave /> Guardar Solución</button>
+                    
+                    <div className="card-footer" style={{ 
+                        padding: '16px 24px', 
+                        borderTop: '1px solid var(--border-color)', 
+                        display: 'flex', 
+                        justifyContent: 'flex-end', 
+                        gap: '12px',
+                        background: 'white'
+                    }}>
+                        <button type="button" className="btn btn--ghost" onClick={onClose} style={{ fontWeight: '600' }}>Cancelar</button>
+                        <button type="submit" className="btn btn--primary" style={{ padding: '10px 24px', fontWeight: '700' }}>
+                            <FiSave style={{ marginRight: '8px' }} /> 
+                            {initialData ? 'Guardar Cambios' : 'Publicar en Catálogo'}
+                        </button>
                     </div>
                 </form>
             </div>
         </div>
     );
 }
-        </div>
-    );
-};
-
 const SolutionCard = ({ sol, imageData, onGenerateImage, onClick }) => {
     const status = imageData?.status || 'none';
     const imageUrl = imageData?.url;
@@ -829,8 +1147,8 @@ const SolutionCard = ({ sol, imageData, onGenerateImage, onClick }) => {
                 </div>
                 <h3>{sol.nombre}</h3>
                 <div className="card-tags">
-                    {sol.sector.slice(0, 1).map(s => <span key={s} className="tag tag-sector">{s}</span>)}
-                    {sol.departamento.slice(0, 1).map(d => <span key={d} className="tag tag-dept">{d}</span>)}
+                    {sol.sector?.slice(0, 1).map(s => <span key={s} className="tag tag-sector">{s}</span>)}
+                    {sol.departamento?.slice(0, 1).map(d => <span key={d} className="tag tag-dept">{d}</span>)}
                 </div>
                 <div className="card-metrics">
                     <div className="metric">

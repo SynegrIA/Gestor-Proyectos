@@ -1,9 +1,65 @@
 import { useState, useMemo, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
-import { FiSearch, FiPlus, FiFile, FiEye, FiDownload, FiCopy, FiClock, FiArrowLeft, FiChevronDown, FiChevronRight, FiEdit2, FiLink, FiX, FiCheck, FiSave, FiLayers, FiExternalLink, FiTrash2, FiUpload, FiMoreHorizontal } from 'react-icons/fi'
+import { FiSearch, FiPlus, FiFile, FiEye, FiDownload, FiCopy, FiClock, FiArrowLeft, FiChevronDown, FiChevronRight, FiEdit2, FiLink, FiX, FiCheck, FiSave, FiLayers, FiExternalLink, FiTrash2, FiUpload, FiMoreHorizontal, FiGrid, FiList } from 'react-icons/fi'
 import { ASSETS_CATALOG, ASSET_TYPES, ASSET_FASES } from '../../data/assetsCatalog'
 import SOLUTIONS_CATALOG from '../../data/catalogo_soluciones_v1.json'
 import { getAssetLinks, updateAssetLinks } from '../../utils/assetLinksHelper'
+
+// Modal de Vinculación (Componente Separado)
+const LinkingModal = ({ isOpen, linkingAsset, tempSelectedSolutions, setTempSelectedSolutions, onSave, onClose }) => {
+    if (!isOpen) return null;
+    return (
+        <div className="modal-overlay" style={{
+            position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
+            background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center',
+            justifyContent: 'center', zIndex: 1000, padding: 'var(--space-4)'
+        }}>
+            <div className="card" style={{ width: '100%', maxWidth: '500px', maxHeight: '80vh', display: 'flex', flexDirection: 'column' }}>
+                <div className="card-header" style={{ padding: 'var(--space-4)', borderBottom: '1px solid var(--border-color)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <h3 style={{ margin: 0 }}>Vincular a Solución</h3>
+                    <button className="btn btn--ghost" onClick={onClose}><FiX /></button>
+                </div>
+                <div className="card-body" style={{ padding: 'var(--space-4)', overflowY: 'auto' }}>
+                    <p className="text-sm text-muted mb-4">Selecciona las soluciones que utilizan el activo: <strong>{linkingAsset?.nombre}</strong></p>
+                    <div style={{ display: 'grid', gap: 'var(--space-2)' }}>
+                        {SOLUTIONS_CATALOG.map(sol => {
+                            const isSelected = tempSelectedSolutions.includes(sol.id.toString())
+                            return (
+                                <div 
+                                    key={sol.id} 
+                                    onClick={() => {
+                                        setTempSelectedSolutions(prev => 
+                                            isSelected ? prev.filter(id => id !== sol.id.toString()) : [...prev, sol.id.toString()]
+                                        )
+                                    }}
+                                    style={{
+                                        padding: 'var(--space-3)',
+                                        borderRadius: 'var(--radius-md)',
+                                        border: '1px solid',
+                                        borderColor: isSelected ? 'var(--primary-300)' : 'var(--border-color)',
+                                        background: isSelected ? 'var(--primary-50)' : 'transparent',
+                                        cursor: 'pointer',
+                                        display: 'flex',
+                                        justifyContent: 'space-between',
+                                        alignItems: 'center',
+                                        transition: 'all 0.2s'
+                                    }}
+                                >
+                                    <span className="text-sm" style={{ fontWeight: isSelected ? 'var(--font-semibold)' : 'normal' }}>{sol.nombre}</span>
+                                    {isSelected && <FiCheck className="text-primary" />}
+                                </div>
+                            )
+                        })}
+                    </div>
+                </div>
+                <div className="card-footer" style={{ padding: 'var(--space-4)', borderTop: '1px solid var(--border-color)', display: 'flex', justifyContent: 'flex-end', gap: 'var(--space-3)' }}>
+                    <button className="btn btn--ghost" onClick={onClose}>Cancelar</button>
+                    <button className="btn btn--primary" onClick={onSave}>Guardar Cambios</button>
+                </div>
+            </div>
+        </div>
+    )
+}
 
 export default function ConsultorActivos({ isAdminView = false }) {
     const { id } = useParams()
@@ -20,6 +76,8 @@ export default function ConsultorActivos({ isAdminView = false }) {
     const [isLinkModalOpen, setIsLinkModalOpen] = useState(false)
     const [linkingAsset, setLinkingAsset] = useState(null)
     const [tempSelectedSolutions, setTempSelectedSolutions] = useState([])
+    const [viewMode, setViewMode] = useState('grid') // 'grid' o 'solutions'
+    const [collapsedGroups, setCollapsedGroups] = useState({}) // { groupId: boolean }
 
     // Cargar activo desde URL
     useEffect(() => {
@@ -136,10 +194,117 @@ export default function ConsultorActivos({ isAdminView = false }) {
         return sol ? sol.nombre : id
     }
 
+    const groupedBySolution = useMemo(() => {
+        const groups = []
+        
+        // Inicializar grupos con soluciones que tienen activos
+        SOLUTIONS_CATALOG.forEach(sol => {
+            const assetsInSol = filtered.filter(a => 
+                assetLinks.some(link => link.asset_id === a.id.toString() && link.solution_id === sol.id.toString())
+            )
+            if (assetsInSol.length > 0) {
+                groups.push({
+                    id: sol.id,
+                    nombre: sol.nombre,
+                    assets: assetsInSol
+                })
+            }
+        })
+
+        // Activos sin solución
+        const uncategorized = filtered.filter(a => 
+            !assetLinks.some(link => link.asset_id === a.id.toString())
+        )
+        if (uncategorized.length > 0) {
+            groups.push({
+                id: 'uncategorized',
+                nombre: 'Sin Vincular / General',
+                assets: uncategorized
+            })
+        }
+
+        return groups
+    }, [filtered, assetLinks])
+
+    // Componente de tarjeta de activo para reutilizar
+    const AssetCard = ({ activo }) => {
+        const linkedSols = assetLinks.filter(l => l.asset_id === activo.id.toString())
+        return (
+            <div
+                key={activo.id}
+                className="card card--interactive"
+                style={{ transition: 'all 0.2s ease', position: 'relative' }}
+                onClick={() => navigate(isAdminView ? `/admin/activos/${activo.id}` : `/consultor/activos/${activo.id}`)}
+                onMouseOver={e => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = 'var(--shadow-lg)' }}
+                onMouseOut={e => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = 'var(--shadow-sm)' }}
+            >
+                <div className="card-body">
+                    <div style={{ display: 'flex', alignItems: 'flex-start', gap: 'var(--space-3)', marginBottom: 'var(--space-3)' }}>
+                        <div style={{
+                            width: '40px',
+                            height: '40px',
+                            background: 'var(--primary-100)',
+                            borderRadius: 'var(--radius-md)',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            color: 'var(--primary-600)'
+                        }}>
+                            <FiFile size={20} />
+                        </div>
+                        <div style={{ flex: 1 }}>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                <h4 style={{ margin: '0 0 var(--space-1)' }}>{activo.nombre}</h4>
+                                <button 
+                                    className="btn btn--ghost btn--sm" 
+                                    onClick={(e) => openLinkModal(e, activo)}
+                                    title="Vincular a solución"
+                                >
+                                    <FiLink size={14} />
+                                </button>
+                            </div>
+                            <div style={{ display: 'flex', gap: 'var(--space-2)' }}>
+                                <span className="badge badge--neutral">{activo.tipo}</span>
+                                <span className="badge badge--info">{activo.fase}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <p className="text-sm text-muted" style={{ margin: '0 0 var(--space-3)', height: '40px', overflow: 'hidden' }}>
+                        {activo.desc}
+                    </p>
+
+                    {/* "Usado en" chips */}
+                    {linkedSols.length > 0 && (
+                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px', marginBottom: 'var(--space-4)' }}>
+                            <span className="text-xs text-muted" style={{ width: '100%' }}>Usado en:</span>
+                            {linkedSols.slice(0, 2).map((link, idx) => (
+                                <span key={idx} className="badge badge--primary" style={{ fontSize: '10px', padding: '1px 6px', background: 'var(--primary-50)', color: 'var(--primary-700)', border: '1px solid var(--primary-100)' }}>
+                                    {getSolutionName(link.solution_id)}
+                                </span>
+                            ))}
+                            {linkedSols.length > 2 && (
+                                <span className="text-xs text-muted">+{linkedSols.length - 2}</span>
+                            )}
+                        </div>
+                    )}
+
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <div className="text-xs text-muted">
+                            <FiClock style={{ marginRight: 4 }} />
+                            {activo.version} · {activo.updated_at}
+                        </div>
+                        <span className="text-xs text-primary">{activo.sections_count} secciones →</span>
+                    </div>
+                </div>
+            </div>
+        )
+    }
+
     // Vista de detalle con secciones desplegables (Convertida a Ficha de Activo Editable)
     if (selectedActivo && editData) {
         return (
-            <div className="asset-detail-container" style={{ maxWidth: '1000px', margin: '0 auto' }}>
+            <div className="asset-detail-container" style={{ maxWidth: '1600px', width: '98%', margin: '0 auto' }}>
                 <button
                     className="btn btn--ghost"
                     onClick={() => navigate(isAdminView ? '/admin/activos' : '/consultor/activos')}
@@ -498,6 +663,17 @@ export default function ConsultorActivos({ isAdminView = false }) {
                         </div>
                     )}
                 </div>
+                
+                {/* Modal de Vinculación */}
+                <LinkingModal 
+                    isOpen={isLinkModalOpen} 
+                    linkingAsset={linkingAsset} 
+                    tempSelectedSolutions={tempSelectedSolutions}
+                    setTempSelectedSolutions={setTempSelectedSolutions}
+                    SOLUTIONS_CATALOG={SOLUTIONS_CATALOG}
+                    onClose={() => setIsLinkModalOpen(false)}
+                    onSave={handleSaveLinks}
+                />
             </div>
         )
     }
@@ -506,198 +682,252 @@ export default function ConsultorActivos({ isAdminView = false }) {
         <div className="activos-container">
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 'var(--space-6)' }}>
                 <div>
-                    <h2 style={{ margin: 0 }}>Activos Reutilizables</h2>
+                    <h2 style={{ margin: 0, fontSize: '1.75rem', fontWeight: '800' }}>Activos Reutilizables</h2>
                     <p className="text-muted" style={{ margin: 0 }}>Biblioteca de herramientas, scripts y plantillas para consultoría.</p>
                 </div>
-                <button className="btn btn--primary" onClick={handleNewAsset}>
-                    <FiPlus /> Nuevo Activo
-                </button>
-            </div>
-
-            {/* Filtros */}
-            <div className="card" style={{ padding: 'var(--space-4)', marginBottom: 'var(--space-6)' }}>
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 'var(--space-4)' }}>
-                    <div style={{ flex: '1 1 300px', position: 'relative' }}>
-                        <FiSearch style={{ position: 'absolute', left: 'var(--space-3)', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
-                        <input
-                            type="text"
-                            placeholder="Buscar activos..."
-                            className="input"
-                            style={{ paddingLeft: 'var(--space-10)', width: '100%' }}
-                            value={search}
-                            onChange={(e) => setSearch(e.target.value)}
-                        />
+                <div style={{ display: 'flex', gap: 'var(--space-3)' }}>
+                    <div style={{ 
+                        background: 'var(--bg-secondary)', 
+                        padding: '4px', 
+                        borderRadius: 'var(--radius-md)',
+                        display: 'flex',
+                        gap: '4px'
+                    }}>
+                        <button 
+                            className={`btn btn--sm ${viewMode === 'grid' ? 'btn--primary' : 'btn--ghost'}`}
+                            onClick={() => setViewMode('grid')}
+                            style={{ padding: '6px 12px' }}
+                        >
+                            <FiGrid style={{ marginRight: '6px' }} /> Cuadrícula
+                        </button>
+                        <button 
+                            className={`btn btn--sm ${viewMode === 'solutions' ? 'btn--primary' : 'btn--ghost'}`}
+                            onClick={() => setViewMode('solutions')}
+                            style={{ padding: '6px 12px' }}
+                        >
+                            <FiList style={{ marginRight: '6px' }} /> Por Solución
+                        </button>
                     </div>
-                    
-                    <div style={{ display: 'flex', gap: 'var(--space-3)' }}>
-                        <div>
-                            <label className="text-xs text-muted" style={{ display: 'block', marginBottom: '4px' }}>Tipo</label>
-                            <select className="input" value={filterTipo} onChange={(e) => setFilterTipo(e.target.value)}>
-                                {ASSET_TYPES.map(t => <option key={t} value={t}>{t}</option>)}
-                            </select>
-                        </div>
-                        <div>
-                            <label className="text-xs text-muted" style={{ display: 'block', marginBottom: '4px' }}>Fase</label>
-                            <select className="input" value={filterFase} onChange={(e) => setFilterFase(e.target.value)}>
-                                {ASSET_FASES.map(f => <option key={f} value={f}>{f}</option>)}
-                            </select>
-                        </div>
-                        <div>
-                            <label className="text-xs text-muted" style={{ display: 'block', marginBottom: '4px' }}>Solución</label>
-                            <select 
-                                className="input" 
-                                style={{ minWidth: '180px' }}
-                                value={filterSolution} 
-                                onChange={(e) => setFilterSolution(e.target.value)}
-                            >
-                                <option value="Todas">Todas las soluciones</option>
-                                {SOLUTIONS_CATALOG.map(s => (
-                                    <option key={s.id} value={s.id}>{s.nombre}</option>
-                                ))}
-                            </select>
-                        </div>
-                    </div>
+                    <button className="btn btn--primary" onClick={handleNewAsset}>
+                        <FiPlus /> Nuevo Activo
+                    </button>
                 </div>
             </div>
 
-            {/* Grid de Activos */}
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(340px, 1fr))', gap: 'var(--space-4)' }}>
-                {filtered.map(activo => {
-                    const linkedSols = assetLinks.filter(l => l.asset_id === activo.id.toString())
-                    
-                    return (
-                        <div
-                            key={activo.id}
-                            className="card card--interactive"
-                            style={{ transition: 'all 0.2s ease', position: 'relative' }}
-                            onClick={() => navigate(isAdminView ? `/admin/activos/${activo.id}` : `/consultor/activos/${activo.id}`)}
-                            onMouseOver={e => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = 'var(--shadow-lg)' }}
-                            onMouseOut={e => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = 'var(--shadow-sm)' }}
+            {/* Filtros Modernizados */}
+            <div style={{ 
+                background: 'white', 
+                padding: 'var(--space-2)', 
+                borderRadius: 'var(--radius-xl)', 
+                marginBottom: 'var(--space-8)',
+                boxShadow: '0 4px 20px rgba(0,0,0,0.05)',
+                border: '1px solid var(--border-color)',
+                display: 'flex',
+                alignItems: 'center',
+                flexWrap: 'wrap',
+                gap: 'var(--space-2)'
+            }}>
+                <div style={{ flex: '1 1 300px', position: 'relative' }}>
+                    <FiSearch style={{ position: 'absolute', left: 'var(--space-4)', top: '50%', transform: 'translateY(-50%)', color: 'var(--primary-500)' }} />
+                    <input
+                        type="text"
+                        placeholder="Buscar activos por nombre o contenido..."
+                        className="input"
+                        style={{ 
+                            paddingLeft: 'var(--space-12)', 
+                            width: '100%', 
+                            border: 'none', 
+                            background: 'transparent',
+                            fontSize: 'var(--text-lg)',
+                            height: '50px'
+                        }}
+                        value={search}
+                        onChange={(e) => setSearch(e.target.value)}
+                    />
+                </div>
+
+                <div style={{ height: '30px', width: '1px', background: 'var(--border-color)', margin: '0 10px', display: 'none' }}></div>
+                
+                <div style={{ 
+                    display: 'flex', 
+                    gap: 'var(--space-2)', 
+                    padding: 'var(--space-2)',
+                    flexWrap: 'wrap'
+                }}>
+                    <div style={{ display: 'flex', alignItems: 'center', background: 'var(--bg-secondary)', borderRadius: 'var(--radius-lg)', padding: '0 var(--space-3)' }}>
+                        <span className="text-xs text-muted" style={{ marginRight: '8px', fontWeight: 'bold' }}>TIPO</span>
+                        <select 
+                            style={{ 
+                                background: 'transparent', 
+                                border: 'none', 
+                                padding: '8px 0', 
+                                outline: 'none',
+                                fontSize: 'var(--text-sm)',
+                                fontWeight: 'semibold',
+                                cursor: 'pointer',
+                                minWidth: '100px'
+                            }} 
+                            value={filterTipo} 
+                            onChange={(e) => setFilterTipo(e.target.value)}
                         >
-                            <div className="card-body">
-                                <div style={{ display: 'flex', alignItems: 'flex-start', gap: 'var(--space-3)', marginBottom: 'var(--space-3)' }}>
-                                    <div style={{
-                                        width: '40px',
-                                        height: '40px',
-                                        background: 'var(--primary-100)',
-                                        borderRadius: 'var(--radius-md)',
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        justifyContent: 'center',
-                                        color: 'var(--primary-600)'
-                                    }}>
-                                        <FiFile size={20} />
-                                    </div>
-                                    <div style={{ flex: 1 }}>
-                                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                            <h4 style={{ margin: '0 0 var(--space-1)' }}>{activo.nombre}</h4>
-                                            <button 
-                                                className="btn btn--ghost btn--sm" 
-                                                onClick={(e) => openLinkModal(e, activo)}
-                                                title="Vincular a solución"
-                                            >
-                                                <FiLink size={14} />
-                                            </button>
-                                        </div>
-                                        <div style={{ display: 'flex', gap: 'var(--space-2)' }}>
-                                            <span className="badge badge--neutral">{activo.tipo}</span>
-                                            <span className="badge badge--info">{activo.fase}</span>
-                                        </div>
-                                    </div>
-                                </div>
+                            {ASSET_TYPES.map(t => <option key={t} value={t}>{t}</option>)}
+                        </select>
+                    </div>
 
-                                <p className="text-sm text-muted" style={{ margin: '0 0 var(--space-3)', height: '40px', overflow: 'hidden' }}>
-                                    {activo.desc}
-                                </p>
+                    <div style={{ display: 'flex', alignItems: 'center', background: 'var(--bg-secondary)', borderRadius: 'var(--radius-lg)', padding: '0 var(--space-3)' }}>
+                        <span className="text-xs text-muted" style={{ marginRight: '8px', fontWeight: 'bold' }}>FASE</span>
+                        <select 
+                            style={{ 
+                                background: 'transparent', 
+                                border: 'none', 
+                                padding: '8px 0', 
+                                outline: 'none',
+                                fontSize: 'var(--text-sm)',
+                                fontWeight: 'semibold',
+                                cursor: 'pointer',
+                                minWidth: '100px'
+                            }} 
+                            value={filterFase} 
+                            onChange={(e) => setFilterFase(e.target.value)}
+                        >
+                            {ASSET_FASES.map(f => <option key={f} value={f}>{f}</option>)}
+                        </select>
+                    </div>
 
-                                {/* "Usado en" chips */}
-                                {linkedSols.length > 0 && (
-                                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px', marginBottom: 'var(--space-4)' }}>
-                                        <span className="text-xs text-muted" style={{ width: '100%' }}>Usado en:</span>
-                                        {linkedSols.slice(0, 2).map((link, idx) => (
-                                            <span key={idx} className="badge badge--primary" style={{ fontSize: '10px', padding: '1px 6px', background: 'var(--primary-50)', color: 'var(--primary-700)', border: '1px solid var(--primary-100)' }}>
-                                                {getSolutionName(link.solution_id)}
-                                            </span>
-                                        ))}
-                                        {linkedSols.length > 2 && (
-                                            <span className="text-xs text-muted">+{linkedSols.length - 2}</span>
-                                        )}
-                                    </div>
-                                )}
+                    <div style={{ display: 'flex', alignItems: 'center', background: 'var(--bg-secondary)', borderRadius: 'var(--radius-lg)', padding: '0 var(--space-3)' }}>
+                        <span className="text-xs text-muted" style={{ marginRight: '8px', fontWeight: 'bold' }}>SOLUCIÓN</span>
+                        <select 
+                            style={{ 
+                                background: 'transparent', 
+                                border: 'none', 
+                                padding: '8px 0', 
+                                outline: 'none',
+                                fontSize: 'var(--text-sm)',
+                                fontWeight: 'semibold',
+                                cursor: 'pointer',
+                                minWidth: '150px'
+                            }}
+                            value={filterSolution} 
+                            onChange={(e) => setFilterSolution(e.target.value)}
+                        >
+                            <option value="Todas">Todas</option>
+                            {SOLUTIONS_CATALOG.map(s => (
+                                <option key={s.id} value={s.id}>{s.nombre}</option>
+                            ))}
+                        </select>
+                    </div>
 
-                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                    <div className="text-xs text-muted">
-                                        <FiClock style={{ marginRight: 4 }} />
-                                        {activo.version} · {activo.updated_at}
-                                    </div>
-                                    <span className="text-xs text-primary">{activo.sections_count} secciones →</span>
-                                </div>
-                            </div>
-                        </div>
-                    )
-                })}
+                    {(filterTipo !== 'Todos' || filterFase !== 'Todas' || filterSolution !== 'Todas' || search) && (
+                        <button 
+                            className="btn btn--ghost btn--sm" 
+                            onClick={() => {
+                                setFilterTipo('Todos')
+                                setFilterFase('Todas')
+                                setFilterSolution('Todas')
+                                setSearch('')
+                            }}
+                            style={{ color: 'var(--danger-500)', fontSize: 'var(--text-xs)' }}
+                        >
+                            <FiX /> Limpiar
+                        </button>
+                    )}
+                </div>
             </div>
 
-            {filtered.length === 0 && (
-                <div className="empty-state">
-                    <div className="empty-state__icon">📁</div>
-                    <h4 className="empty-state__title">No se encontraron activos</h4>
-                    <p className="empty-state__description">Prueba con otros filtros o términos de búsqueda</p>
+            {/* Contenido según vista */}
+            {viewMode === 'grid' ? (
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(340px, 1fr))', gap: 'var(--space-4)' }}>
+                    {filtered.map(activo => (
+                        <AssetCard key={activo.id} activo={activo} />
+                    ))}
+                    {filtered.length === 0 && (
+                        <div className="empty-state" style={{ gridColumn: '1 / -1' }}>
+                            <div className="empty-state__icon">📁</div>
+                            <h4 className="empty-state__title">No se encontraron activos</h4>
+                            <p className="empty-state__description">Prueba con otros filtros o términos de búsqueda</p>
+                        </div>
+                    )}
+                </div>
+            ) : (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-10)' }}>
+                    <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                        <button 
+                            className="btn btn--ghost btn--sm"
+                            onClick={() => {
+                                const allExpanded = Object.values(collapsedGroups).every(v => !v) && Object.keys(collapsedGroups).length === groupedBySolution.length
+                                const newState = {}
+                                groupedBySolution.forEach(g => newState[g.id] = !allExpanded)
+                                setCollapsedGroups(newState)
+                            }}
+                        >
+                            {Object.values(collapsedGroups).some(v => v) ? 'Expandir todo' : 'Colapsar todo'}
+                        </button>
+                    </div>
+                    {groupedBySolution.map(group => {
+                        const isCollapsed = collapsedGroups[group.id]
+                        return (
+                            <div key={group.id} className="solution-group">
+                                <div 
+                                    onClick={() => setCollapsedGroups(prev => ({ ...prev, [group.id]: !prev[group.id] }))}
+                                    style={{ 
+                                        display: 'flex', 
+                                        alignItems: 'center', 
+                                        gap: 'var(--space-3)', 
+                                        marginBottom: isCollapsed ? '0' : 'var(--space-4)',
+                                        borderBottom: '2px solid var(--primary-100)',
+                                        paddingBottom: 'var(--space-3)',
+                                        cursor: 'pointer'
+                                    }}
+                                >
+                                    {isCollapsed ? <FiChevronRight /> : <FiChevronDown />}
+                                    <div style={{ 
+                                        width: '12px', 
+                                        height: '24px', 
+                                        background: 'var(--primary-500)', 
+                                        borderRadius: 'var(--radius-sm)' 
+                                    }}></div>
+                                    <h3 style={{ margin: 0, fontSize: 'var(--text-xl)', flex: 1 }}>
+                                        {group.nombre} 
+                                        <span style={{ 
+                                            marginLeft: 'var(--space-3)', 
+                                            fontSize: 'var(--text-sm)', 
+                                            color: 'var(--text-muted)',
+                                            fontWeight: 'normal'
+                                        }}>
+                                            ({group.assets.length} activos)
+                                        </span>
+                                    </h3>
+                                </div>
+                                {!isCollapsed && (
+                                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(340px, 1fr))', gap: 'var(--space-4)' }}>
+                                        {group.assets.map(activo => (
+                                            <AssetCard key={activo.id} activo={activo} />
+                                        ))}
+                                    </div>
+                                )}
+                            </div>
+                        )
+                    })}
+                    {groupedBySolution.length === 0 && (
+                        <div className="empty-state">
+                            <div className="empty-state__icon">📁</div>
+                            <h4 className="empty-state__title">No se encontraron activos para agrupar</h4>
+                            <p className="empty-state__description">Prueba con otros filtros o términos de búsqueda</p>
+                        </div>
+                    )}
                 </div>
             )}
 
             {/* Modal de Vinculación */}
-            {isLinkModalOpen && (
-                <div className="modal-overlay" style={{
-                    position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
-                    background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center',
-                    justifyContent: 'center', zIndex: 1000, padding: 'var(--space-4)'
-                }}>
-                    <div className="card" style={{ width: '100%', maxWidth: '500px', maxHeight: '80vh', display: 'flex', flexDirection: 'column' }}>
-                        <div className="card-header" style={{ padding: 'var(--space-4)', borderBottom: '1px solid var(--border-color)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                            <h3 style={{ margin: 0 }}>Vincular a Solución</h3>
-                            <button className="btn btn--ghost" onClick={() => setIsLinkModalOpen(false)}><FiX /></button>
-                        </div>
-                        <div className="card-body" style={{ padding: 'var(--space-4)', overflowY: 'auto' }}>
-                            <p className="text-sm text-muted mb-4">Selecciona las soluciones que utilizan el activo: <strong>{linkingAsset?.nombre}</strong></p>
-                            <div style={{ display: 'grid', gap: 'var(--space-2)' }}>
-                                {SOLUTIONS_CATALOG.map(sol => {
-                                    const isSelected = tempSelectedSolutions.includes(sol.id.toString())
-                                    return (
-                                        <div 
-                                            key={sol.id} 
-                                            onClick={() => {
-                                                setTempSelectedSolutions(prev => 
-                                                    isSelected ? prev.filter(id => id !== sol.id.toString()) : [...prev, sol.id.toString()]
-                                                )
-                                            }}
-                                            style={{
-                                                padding: 'var(--space-3)',
-                                                borderRadius: 'var(--radius-md)',
-                                                border: '1px solid',
-                                                borderColor: isSelected ? 'var(--primary-300)' : 'var(--border-color)',
-                                                background: isSelected ? 'var(--primary-50)' : 'transparent',
-                                                cursor: 'pointer',
-                                                display: 'flex',
-                                                justifyContent: 'space-between',
-                                                alignItems: 'center',
-                                                transition: 'all 0.2s'
-                                            }}
-                                        >
-                                            <span className="text-sm" style={{ fontWeight: isSelected ? 'var(--font-semibold)' : 'normal' }}>{sol.nombre}</span>
-                                            {isSelected && <FiCheck className="text-primary" />}
-                                        </div>
-                                    )
-                                })}
-                            </div>
-                        </div>
-                        <div className="card-footer" style={{ padding: 'var(--space-4)', borderTop: '1px solid var(--border-color)', display: 'flex', justifyContent: 'flex-end', gap: 'var(--space-3)' }}>
-                            <button className="btn btn--ghost" onClick={() => setIsLinkModalOpen(false)}>Cancelar</button>
-                            <button className="btn btn--primary" onClick={handleSaveLinks}>Guardar Cambios</button>
-                        </div>
-                    </div>
-                </div>
-            )}
+            <LinkingModal 
+                isOpen={isLinkModalOpen} 
+                linkingAsset={linkingAsset} 
+                tempSelectedSolutions={tempSelectedSolutions}
+                setTempSelectedSolutions={setTempSelectedSolutions}
+                SOLUTIONS_CATALOG={SOLUTIONS_CATALOG}
+                onClose={() => setIsLinkModalOpen(false)}
+                onSave={handleSaveLinks}
+            />
         </div>
     )
 }
